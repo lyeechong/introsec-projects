@@ -5,5 +5,13 @@
  */
 public class InstructionChecker
 {
+    public InstructionChecker()
+    {
+        
+    }
     
+    public boolean isInstructionIsLegal(String instruction)
+    {
+        return true;
+    }
 }
