@@ -1,4 +1,5 @@
 
+import TokenHelper.TokenHelper;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ public class ReferenceMonitor
     Map<SystemSubject, SecurityLevel> subjectSecurityMap;
     Map<SystemObject, SecurityLevel> objectSecurityMap;
     InstructionChecker instructionChecker;
+    TokenHelper objectManager;
+    ClearanceChecker cc;
 
     /**
      * Constructor. Inits the subjectSecurityMap and the objectSecurityMap.
@@ -26,22 +29,34 @@ public class ReferenceMonitor
         subjectSecurityMap = new HashMap<>();
         objectSecurityMap = new HashMap<>();
         instructionChecker = new InstructionChecker();
+        objectManager = new TokenHelper();
+        cc = new ClearanceChecker();
     }
     
-    public InstructionResult performInstruction(String instruction)
+    public InstructionObject performInstruction(String instruction)
     {
         boolean validInstruction = instructionChecker.isInstructionIsLegal(instruction);
-        if(!validInstruction)
+        if(!validInstruction) //syntax checking only
         {
             // -- the instruction was illegal, so generate a BadInstruction
-            return new InstructionResult("Bad Instruction", false);
+            return new BadInstruction("Bad Instruction");
         }
         
-        // -- perform the instruction since it was valid (via the ObjectManager)
+        //TODO: check the security clearance stuff here
+        //read down
+        //write up
         
+        objectManager.obtainTokenAtIndex(instruction, index);
+        
+        SystemSubject so = SystemSubjectsContainer.get(subjName);
+        SystemObject so = SystemObjectsContainer.get(objName);
+        cc.hasClearance();
+        
+        // -- perform the instruction since it was valid (via the ObjectManager)
+        InstructionObject result = objectManager.performInstruction(instruction);
         //TODO fill out the rest of this method
         
         
-        return null; //TODO change this
+        return result;
     }
 }

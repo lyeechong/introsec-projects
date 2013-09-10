@@ -15,9 +15,9 @@ public class SystemObject
      * What the object stores. (This is what will be returned when someone wants
      * to read the object).
      */
-    private String value;
+    private int value;
 
-    public SystemObject(String name, String value)
+    public SystemObject(String name, int value)
     {
         this.name = name;
         this.value = value;
@@ -28,7 +28,7 @@ public class SystemObject
      *
      * @param value
      */
-    public void setValue(String value)
+    public void setValue(int value)
     {
         this.value = value;
     }
@@ -38,7 +38,7 @@ public class SystemObject
      *
      * @return
      */
-    public String getValue()
+    public int getValue()
     {
         return value;
     }
