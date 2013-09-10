@@ -26,6 +26,11 @@ public class ClearanceChecker {
 
         SecurityLevel ssSL = subjectSecurityMap.get(ss);
         SecurityLevel soSL = objectSecurityMap.get(so);
+        
+        if(ssSL == null || soSL == null)
+        {
+            return false;
+        }
 
         if (TokenHelper.isRead(instruction)) {
             //read down
@@ -49,5 +54,15 @@ public class ClearanceChecker {
         }
 
         return hasClearance;
+    }
+    
+    public void setSubjectClearance(SystemSubject ss, SecurityLevel sl)
+    {
+        subjectSecurityMap.put(ss, sl);
+    }
+    
+    public void setObjectClearance(SystemObject so, SecurityLevel sl)
+    {
+        objectSecurityMap.put(so, sl);
     }
 }

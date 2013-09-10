@@ -20,11 +20,11 @@ public class SystemObjectsContainer {
     
     public static SystemObject get(String s)
     {
-        return soHash.get(s);
+        return soHash.get(s.toLowerCase());
     }
     
     public static SystemObject put(String key, SystemObject value)
     {
-        return soHash.put(key, value);
+        return soHash.put(key.toLowerCase(), value);
     }
 }

@@ -1,5 +1,4 @@
 
-
 /**
  * Whenever a subject wishes to perform an action, it is directed here and
  * verified that they have the right clearance, and if so, the ObjectManager
@@ -20,14 +19,19 @@ public class ReferenceMonitor {
      */
     public ReferenceMonitor() {
         instructionChecker = new InstructionChecker();
-        objectManager = new TokenHelper();
+        objectManager = new ObjectManager();
         cc = new ClearanceChecker();
     }
 
+    /**
+     * Performs the instruction, checking the clearnce and syntax of the instruction before asking the ObjectManager to perform it.
+     * @param instruction
+     * @return 
+     */
     public InstructionObject performInstruction(String instruction) {
-        
+
         InstructionObject result = new InstructionObject("Something went terribly wrong.");
-        
+
         boolean validInstruction = instructionChecker.isInstructionIsLegal(instruction);
         if (!validInstruction) //syntax checking only
         {
@@ -35,10 +39,7 @@ public class ReferenceMonitor {
             return new BadInstruction("Bad Instruction");
         }
 
-        //TODO: check the security clearance stuff here
-        //read down
-        //write up
-
+        // -- check the security clearance stuff here
 
         SystemSubject ss = SystemSubjectsContainer.get(TokenHelper.getSubjectName(instruction));
         SystemObject so = SystemObjectsContainer.get(TokenHelper.getObjectName(instruction));
@@ -58,5 +59,17 @@ public class ReferenceMonitor {
         }
 
         return result;
+    }
+
+    public void createSubject(String name, SecurityLevel securityLevel) {
+        SystemSubject ss = new SystemSubject(name);
+        cc.setSubjectClearance(ss, securityLevel);
+        SystemSubjectsContainer.put(name, ss);
+    }
+
+    public void createObject(String name, SecurityLevel securityLevel, int value) {
+        SystemObject so = new SystemObject(name, value);
+        cc.setObjectClearance(so, securityLevel);
+        SystemObjectsContainer.put(name, so);
     }
 }

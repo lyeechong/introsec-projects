@@ -20,11 +20,11 @@ public class SystemSubjectsContainer {
     
     public static SystemSubject get(String s)
     {
-        return ssHash.get(s);
+        return ssHash.get(s.toLowerCase());
     }
     
     public static SystemSubject put(String key, SystemSubject value)
     {
-        return ssHash.put(key, value);
+        return ssHash.put(key.toLowerCase(), value);
     }
 }
