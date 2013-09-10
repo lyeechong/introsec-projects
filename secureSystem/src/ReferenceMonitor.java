@@ -1,5 +1,4 @@
 
-import TokenHelper.TokenHelper;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +14,6 @@ import java.util.Map;
 public class ReferenceMonitor
 {
 
-    Map<SystemSubject, SecurityLevel> subjectSecurityMap;
-    Map<SystemObject, SecurityLevel> objectSecurityMap;
     InstructionChecker instructionChecker;
     TokenHelper objectManager;
     ClearanceChecker cc;
@@ -26,8 +23,6 @@ public class ReferenceMonitor
      */
     public ReferenceMonitor()
     {
-        subjectSecurityMap = new HashMap<>();
-        objectSecurityMap = new HashMap<>();
         instructionChecker = new InstructionChecker();
         objectManager = new TokenHelper();
         cc = new ClearanceChecker();
