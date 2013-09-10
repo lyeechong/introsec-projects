@@ -7,25 +7,44 @@ import java.util.Scanner;
  *
  * @author lchong
  */
-public class SecureSystem {
+public class SecureSystem
+{
 
     ReferenceMonitor rf;
+    final boolean DEBUG = true;
 
     /**
      * Main method.
      * @param args first index in args is the instructionList
      */
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws FileNotFoundException
+    {
         SecureSystem ss = new SecureSystem();
         ss.setup();
         ss.run(args);
     }
 
-    public SecureSystem() {
+    public SecureSystem()
+    {
         rf = new ReferenceMonitor();
     }
 
-    private void setup() {
+    private void printState()
+    {
+        System.out.println("The current state is:");
+        for (String key : SystemObjectsContainer.getKeys())
+        {
+            System.out.println("\t" + key + " has value: " + SystemObjectsContainer.get(key).getValue());
+        }
+        for (String key : SystemSubjectsContainer.getKeys())
+        {
+            System.out.println("\t" + key + " has recently read: " + SystemSubjectsContainer.get(key).getTemp());
+        }
+        System.out.println("");
+    }
+
+    private void setup()
+    {
         // LOW and HIGH are constants defined in the SecurityLevel 
         // class, such that HIGH dominates LOW.
 
@@ -34,8 +53,8 @@ public class SecureSystem {
 
         // We add two subjects, one high and one low.
 
-        rf.createSubject("lyle", low);
-        rf.createSubject("hal", high);
+        rf.createSubject("Lyle", low);
+        rf.createSubject("Hal", high);
 
 
         // We add two objects, one high and one low.
@@ -44,26 +63,38 @@ public class SecureSystem {
         rf.createObject("Hobj", high, 0);
     }
 
-    private void run(String[] args) {
+    private void run(String[] args)
+    {
 
-        try {
-            if (args.length != 1) {
+        try
+        {
+            if (args.length != 1)
+            {
+                System.err.println("Wrong number of arguments. Expected: 1, actual: " + args.length);
                 return;
             }
 
-            String instructionList = args[0];
+            String instructionListFileName = args[0];
 
-            Scanner file = new Scanner(new File(instructionList));
+            System.out.println("Reading from file: " + instructionListFileName + "\n");
+
+            Scanner ilFile = new Scanner(new File(instructionListFileName));
 
 
-            while (file.hasNextLine()) {
-                String instruction = file.nextLine();
+            while (ilFile.hasNextLine())
+            {
+                String instruction = ilFile.nextLine();
                 InstructionObject result = rf.performInstruction(instruction);
-                System.out.println("Instruction :: " + instruction);
-                System.out.println("Result :: " + result.getOutput());
+                System.out.println(result.getOutput());
+                if (DEBUG)
+                {
+                    printState();
+                }
             }
-        } catch (FileNotFoundException e) {
-            System.out.println("blaggghhh");
+        }
+        catch (FileNotFoundException e)
+        {
+            System.err.println("Could not find the input file! (It needs to be called instructionList)");
         }
     }
 }

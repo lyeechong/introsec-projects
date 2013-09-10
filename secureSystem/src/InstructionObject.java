@@ -7,14 +7,16 @@
  *
  * @author lchong
  */
-public class InstructionObject {
+public class InstructionObject
+{
+
     private String message;
-    
+
     public InstructionObject(String message)
     {
         this.message = message;
     }
-    
+
     public String getOutput()
     {
         return message;

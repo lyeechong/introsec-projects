@@ -7,24 +7,40 @@
  *
  * @author lchong
  */
-public class ObjectManager {
+public class ObjectManager
+{
 
-    public ObjectManager() {
+    public ObjectManager()
+    {
     }
 
-    private void performWrite(SystemObject so, SystemSubject ss, int valToWrite) {
+    private void performWrite(SystemObject so, SystemSubject ss, int valToWrite)
+    {
         so.setValue(valToWrite);
     }
 
-    private void performRead(SystemObject so, SystemSubject ss) {
+    private void performRead(SystemObject so, SystemSubject ss)
+    {
         int value = so.getValue();
         ss.setTempValue(value);
     }
 
-    public void performInstruction(String instruction) {
-        if (TokenHelper.isRead(instruction)) {
-            InstructionObject result;
+    public void performUnauthorizedRead(String instruction)
+    {
+        if (!TokenHelper.isRead(instruction))
+        {
+            assert false;
+        }
 
+        String subjName = TokenHelper.getSubjectName(instruction);
+        SystemSubject ss = SystemSubjectsContainer.get(subjName);
+        ss.setTempValue(0);
+    }
+
+    public void performInstruction(String instruction)
+    {
+        if (TokenHelper.isRead(instruction))
+        {
             String subjName = TokenHelper.getSubjectName(instruction);
             String objName = TokenHelper.getObjectName(instruction);
 
@@ -32,9 +48,9 @@ public class ObjectManager {
             SystemObject so = SystemObjectsContainer.get(objName);
             performRead(so, ss);
 
-        } else if (TokenHelper.isWrite(instruction)) {
-            InstructionObject result;
-
+        }
+        else if (TokenHelper.isWrite(instruction))
+        {
             String subjName = TokenHelper.getSubjectName(instruction);
             String objName = TokenHelper.getObjectName(instruction);
             int val = Integer.parseInt(TokenHelper.obtainTokenAtIndex(instruction, 3));
@@ -42,7 +58,9 @@ public class ObjectManager {
             SystemSubject ss = SystemSubjectsContainer.get(subjName);
             SystemObject so = SystemObjectsContainer.get(objName);
             performWrite(so, ss, val);
-        } else {
+        }
+        else
+        {
             assert false;
         }
     }

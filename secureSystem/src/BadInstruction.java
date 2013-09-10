@@ -7,9 +7,11 @@
  *
  * @author lchong
  */
-public class BadInstruction extends InstructionObject {
+public class BadInstruction extends InstructionObject
+{
 
-    public BadInstruction(String message) {
+    public BadInstruction(String message)
+    {
         super(message);
     }
 }

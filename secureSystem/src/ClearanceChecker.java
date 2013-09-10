@@ -10,40 +10,52 @@ import java.util.Map;
  *
  * @author lchong
  */
-public class ClearanceChecker {
+public class ClearanceChecker
+{
 
     Map<SystemSubject, SecurityLevel> subjectSecurityMap;
     Map<SystemObject, SecurityLevel> objectSecurityMap;
 
-    public ClearanceChecker() {
+    public ClearanceChecker()
+    {
 
         subjectSecurityMap = new HashMap<>();
         objectSecurityMap = new HashMap<>();
     }
 
-    public boolean hasClearance(SystemSubject ss, SystemObject so, String instruction) {
+    public boolean hasClearance(SystemSubject ss, SystemObject so, String instruction)
+    {
         boolean hasClearance = false;
 
         SecurityLevel ssSL = subjectSecurityMap.get(ss);
         SecurityLevel soSL = objectSecurityMap.get(so);
-        
-        if(ssSL == null || soSL == null)
+
+        if (ssSL == null || soSL == null)
         {
             return false;
         }
 
-        if (TokenHelper.isRead(instruction)) {
+        if (TokenHelper.isRead(instruction))
+        {
             //read down
-            if (ssSL.compareTo(soSL) >= 0) {
+            if (ssSL.compareTo(soSL) >= 0)
+            {
                 hasClearance = true;
-            } else {
+            }
+            else
+            {
                 hasClearance = false;
             }
-        } else if (TokenHelper.isWrite(instruction)) {
+        }
+        else if (TokenHelper.isWrite(instruction))
+        {
             //write up
-            if (ssSL.compareTo(soSL) <= 0) {
+            if (ssSL.compareTo(soSL) <= 0)
+            {
                 hasClearance = true;
-            } else {
+            }
+            else
+            {
                 hasClearance = false;
             }
         }
@@ -55,12 +67,12 @@ public class ClearanceChecker {
 
         return hasClearance;
     }
-    
+
     public void setSubjectClearance(SystemSubject ss, SecurityLevel sl)
     {
         subjectSecurityMap.put(ss, sl);
     }
-    
+
     public void setObjectClearance(SystemObject so, SecurityLevel sl)
     {
         objectSecurityMap.put(so, sl);

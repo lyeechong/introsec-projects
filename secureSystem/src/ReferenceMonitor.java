@@ -8,7 +8,8 @@
  *
  * @author lchong
  */
-public class ReferenceMonitor {
+public class ReferenceMonitor
+{
 
     InstructionChecker instructionChecker;
     ObjectManager objectManager;
@@ -17,7 +18,8 @@ public class ReferenceMonitor {
     /**
      * Constructor. Inits the subjectSecurityMap and the objectSecurityMap.
      */
-    public ReferenceMonitor() {
+    public ReferenceMonitor()
+    {
         instructionChecker = new InstructionChecker();
         objectManager = new ObjectManager();
         cc = new ClearanceChecker();
@@ -28,7 +30,8 @@ public class ReferenceMonitor {
      * @param instruction
      * @return 
      */
-    public InstructionObject performInstruction(String instruction) {
+    public InstructionObject performInstruction(String instruction)
+    {
 
         InstructionObject result = new InstructionObject("Something went terribly wrong.");
 
@@ -41,33 +44,52 @@ public class ReferenceMonitor {
 
         // -- check the security clearance stuff here
 
-        SystemSubject ss = SystemSubjectsContainer.get(TokenHelper.getSubjectName(instruction));
-        SystemObject so = SystemObjectsContainer.get(TokenHelper.getObjectName(instruction));
+        String subjectName = TokenHelper.getSubjectName(instruction);
+        String objectName = TokenHelper.getObjectName(instruction);
+
+        SystemSubject ss = SystemSubjectsContainer.get(subjectName);
+        SystemObject so = SystemObjectsContainer.get(objectName);
         boolean hasClearance = cc.hasClearance(ss, so, instruction);
 
-        if (TokenHelper.isRead(instruction)) {
-            result = new InstructionObject(ss.getName() + " reads " + so.getName());
-        } else if (TokenHelper.isWrite(instruction)) {
-            result = new InstructionObject(ss.getName() + " writes value " + TokenHelper.obtainTokenAtIndex(instruction, 3) + " to " + so.getName());
-        } else {
+        if (TokenHelper.isRead(instruction))
+        {
+            result = new InstructionObject(subjectName + " reads " + objectName);
+        }
+        else if (TokenHelper.isWrite(instruction))
+        {
+            result = new InstructionObject(subjectName + " writes value " + TokenHelper.obtainTokenAtIndex(instruction, 3) + " to " + objectName);
+        }
+        else
+        {
             assert false;
         }
 
-        if (hasClearance) {
+        if (hasClearance)
+        {
             // -- perform the instruction since it was valid (via the ObjectManager)
             objectManager.performInstruction(instruction);
+        }
+        else
+        {
+            // -- just set the temp value of the subject to zero
+            if (TokenHelper.isRead(instruction))
+            {
+                objectManager.performUnauthorizedRead(instruction);
+            }
         }
 
         return result;
     }
 
-    public void createSubject(String name, SecurityLevel securityLevel) {
+    public void createSubject(String name, SecurityLevel securityLevel)
+    {
         SystemSubject ss = new SystemSubject(name);
         cc.setSubjectClearance(ss, securityLevel);
         SystemSubjectsContainer.put(name, ss);
     }
 
-    public void createObject(String name, SecurityLevel securityLevel, int value) {
+    public void createObject(String name, SecurityLevel securityLevel, int value)
+    {
         SystemObject so = new SystemObject(name, value);
         cc.setObjectClearance(so, securityLevel);
         SystemObjectsContainer.put(name, so);
