@@ -48,8 +48,11 @@ public class SecureSystem
         // LOW and HIGH are constants defined in the SecurityLevel 
         // class, such that HIGH dominates LOW.
 
-        SecurityLevel low = SecurityLevel.LOW;
-        SecurityLevel high = SecurityLevel.HIGH;
+        SecurityLevel low = new SecurityLevel("LOW", 0);
+        SecurityLevel high = new SecurityLevel("HIGH", 1);
+        
+        rf.createSecurityLevel(low);
+        rf.createSecurityLevel(high);
 
         // We add two subjects, one high and one low.
 

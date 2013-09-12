@@ -95,4 +95,9 @@ public class ReferenceMonitor
         cc.setObjectClearance(so, securityLevel);
         SystemObjectsContainer.put(name, so);
     }
+    
+    public void createSecurityLevel(SecurityLevel sl)
+    {
+        SystemSecurityLevelsContainer.add(sl);
+    }
 }

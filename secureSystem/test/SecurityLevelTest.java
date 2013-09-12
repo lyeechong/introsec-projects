@@ -43,8 +43,8 @@ public class SecurityLevelTest
     public void testCompareTo()
     {
         System.out.println("compare");
-        SecurityLevel slH = SecurityLevel.HIGH;
-        SecurityLevel slL = SecurityLevel.LOW;
+        SecurityLevel slH = new SecurityLevel("high",5);
+        SecurityLevel slL = new SecurityLevel("blah",0);
         assert (slH.compareTo(slL) > 0);
     }
 }

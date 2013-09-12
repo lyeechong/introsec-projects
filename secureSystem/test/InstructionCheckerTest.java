@@ -35,10 +35,15 @@ public class InstructionCheckerTest
     public void setUp()
     {
         ReferenceMonitor rf = new ReferenceMonitor();
-        SecurityLevel low = SecurityLevel.LOW;
-        SecurityLevel high = SecurityLevel.HIGH;
+        SecurityLevel low = new SecurityLevel("LOW", 0);
+        SecurityLevel high = new SecurityLevel("HIGH", 1);
+        
+        rf.createSecurityLevel(low);
+        rf.createSecurityLevel(high);
+
         rf.createSubject("Lyle", low);
         rf.createSubject("Hal", high);
+
         rf.createObject("Lobj", low, 0);
         rf.createObject("Hobj", high, 0);
     }
