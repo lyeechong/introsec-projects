@@ -15,9 +15,19 @@ public class InstructionChecker
 
     public boolean isInstructionIsLegal(String instruction)
     {
+        boolean valid = false;        
+
+        valid = instructionNotEmptyOrNull(instruction)
+                && (validRead(instruction) || validWrite(instruction));
+
+        return valid;
+    }
+
+    private boolean instructionNotEmptyOrNull(String instruction)
+    {
         boolean valid = false;
 
-        valid = validRead(instruction) || validWrite(instruction);
+        valid = instruction != null && !instruction.isEmpty();
 
         return valid;
     }
@@ -66,9 +76,9 @@ public class InstructionChecker
     {
         boolean valid = false;
 
-        valid = TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(WRITE_INSTRUCTION)
-                && TokenHelper.getNumberOfTokensInInstruction(instruction) == 4
-                && validValue(TokenHelper.obtainTokenAtIndex(instruction, 4))
+        valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 4
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(WRITE_INSTRUCTION)
+                && validValue(TokenHelper.obtainTokenAtIndex(instruction, 3))
                 && subjectExists(TokenHelper.getSubjectName(instruction))
                 && objectExists(TokenHelper.getObjectName(instruction));
 
@@ -83,9 +93,8 @@ public class InstructionChecker
     private boolean validRead(String instruction)
     {
         boolean valid = false;
-
-        valid = TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(READ_INSTRUCTION)
-                && TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
+        valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(READ_INSTRUCTION)
                 && subjectExists(TokenHelper.getSubjectName(instruction))
                 && objectExists(TokenHelper.getObjectName(instruction));
 

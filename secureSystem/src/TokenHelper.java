@@ -7,10 +7,10 @@
  */
 public class TokenHelper
 {
-
+    private static String SPLIT_REGEX = "\\s+";
     public static String obtainTokenAtIndex(String instruction, int index)
     {
-        String[] instructionTokens = instruction.split("\\s+");
+        String[] instructionTokens = instruction.split(SPLIT_REGEX);
         return instructionTokens[index];
     }
 
@@ -31,11 +31,12 @@ public class TokenHelper
 
     public static String getObjectName(String inst)
     {
+        
         return obtainTokenAtIndex(inst, 2);
     }
 
     public static int getNumberOfTokensInInstruction(String inst)
     {
-        return inst.split("\\s+").length;
+        return inst.split(SPLIT_REGEX).length;
     }
 }

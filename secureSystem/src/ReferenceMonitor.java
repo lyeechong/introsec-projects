@@ -32,7 +32,8 @@ public class ReferenceMonitor
      */
     public InstructionObject performInstruction(String instruction)
     {
-
+        instruction = instruction.trim(); // -- I don't think the user will mind.
+        
         InstructionObject result = new InstructionObject("Something went terribly wrong.");
 
         boolean validInstruction = instructionChecker.isInstructionIsLegal(instruction);
