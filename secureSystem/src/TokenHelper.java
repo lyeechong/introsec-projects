@@ -33,4 +33,9 @@ public class TokenHelper
     {
         return obtainTokenAtIndex(inst, 2);
     }
+
+    public static int getNumberOfTokensInInstruction(String inst)
+    {
+        return inst.split("\\s+").length;
+    }
 }

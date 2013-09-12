@@ -18,9 +18,14 @@ public class SystemObjectsContainer
 
     static
     {
-        soHash = new HashMap<>();        
+        soHash = new HashMap<>();
     }
 
+    /**
+     * Returns the SystemObject, or null if it does not exist
+     * @param s
+     * @return 
+     */
     public static SystemObject get(String s)
     {
         return soHash.get(s.toLowerCase());

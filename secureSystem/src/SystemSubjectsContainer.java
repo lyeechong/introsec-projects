@@ -21,6 +21,11 @@ public class SystemSubjectsContainer
         ssHash = new HashMap<>();
     }
 
+    /**
+     * Returns the SystemSubject, or null if it does not exist
+     * @param s
+     * @return 
+     */
     public static SystemSubject get(String s)
     {
         return ssHash.get(s.toLowerCase());
