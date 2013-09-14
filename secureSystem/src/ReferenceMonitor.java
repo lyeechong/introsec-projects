@@ -1,4 +1,6 @@
 
+
+
 /**
  * Whenever a subject wishes to perform an action, it is directed here and
  * verified that they have the right clearance, and if so, the ObjectManager
@@ -11,9 +13,9 @@
 public class ReferenceMonitor
 {
 
-    InstructionChecker instructionChecker;
-    ObjectManager objectManager;
-    ClearanceChecker cc;
+    private InstructionChecker instructionChecker;
+    private ObjectManager objectManager;
+    private ClearanceChecker cc;
 
     /**
      * Constructor. Inits the subjectSecurityMap and the objectSecurityMap.
@@ -30,7 +32,7 @@ public class ReferenceMonitor
      * @param instruction
      * @return 
      */
-    public InstructionObject performInstruction(String instruction)
+    public synchronized InstructionObject performInstruction(String instruction)
     {
         instruction = instruction.trim(); // -- I don't think the user will mind.
         

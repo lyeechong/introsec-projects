@@ -71,22 +71,24 @@ public class SecureSystem
 
         try
         {
-            if (args.length != 1)
+            if (args.length != 2)
             {
-                System.err.println("Wrong number of arguments. Expected: 1, actual: " + args.length);
+                System.err.println("Wrong number of arguments. Expected: 2, actual: " + args.length);
                 return;
             }
 
-            String instructionListFileName = args[0];
+            String instructionList1FileName = args[0];
+            String instructionList2FileName = args[1];
 
-            System.out.println("Reading from file: " + instructionListFileName + "\n");
+            System.out.println("Reading from file (1): " + instructionList1FileName + "\n");
+            System.out.println("Reading from file (2): " + instructionList2FileName + "\n");
 
-            Scanner ilFile = new Scanner(new File(instructionListFileName));
-
-
-            while (ilFile.hasNextLine())
+            Scanner ilFile1 = new Scanner(new File(instructionList1FileName));
+            Scanner ilFile2 = new Scanner(new File(instructionList1FileName));
+            
+            while (ilFile1.hasNextLine())
             {
-                String instruction = ilFile.nextLine();
+                String instruction = ilFile1.nextLine();
                 InstructionObject result = rf.performInstruction(instruction);
                 System.out.println(result.getOutput());
                 if (DEBUG)
