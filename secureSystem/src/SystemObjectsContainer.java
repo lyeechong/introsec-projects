@@ -23,20 +23,21 @@ public class SystemObjectsContainer
 
     /**
      * Returns the SystemObject, or null if it does not exist
+     *
      * @param s
-     * @return 
+     * @return
      */
-    public static SystemObject get(String s)
+    public static synchronized SystemObject get(String s)
     {
         return soHash.get(s.toLowerCase());
     }
 
-    public static SystemObject put(String key, SystemObject value)
+    public static synchronized SystemObject put(String key, SystemObject value)
     {
         return soHash.put(key.toLowerCase(), value);
     }
 
-    public static Set<String> getKeys()
+    public static synchronized Set<String> getKeys()
     {
         return soHash.keySet();
     }

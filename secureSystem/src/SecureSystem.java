@@ -11,10 +11,10 @@ public class SecureSystem
 {
 
     ReferenceMonitor rf;
-    final boolean DEBUG = true;
 
     /**
      * Main method.
+     *
      * @param args first index in args is the instructionList
      */
     public static void main(String[] args) throws FileNotFoundException
@@ -29,20 +29,6 @@ public class SecureSystem
         rf = new ReferenceMonitor();
     }
 
-    private void printState()
-    {
-        System.out.println("The current state is:");
-        for (String key : SystemObjectsContainer.getKeys())
-        {
-            System.out.println("\t" + key + " has value: " + SystemObjectsContainer.get(key).getValue());
-        }
-        for (String key : SystemSubjectsContainer.getKeys())
-        {
-            System.out.println("\t" + key + " has recently read: " + SystemSubjectsContainer.get(key).getTemp());
-        }
-        System.out.println("");
-    }
-
     private void setup()
     {
         // LOW and HIGH are constants defined in the SecurityLevel 
@@ -50,7 +36,7 @@ public class SecureSystem
 
         SecurityLevel low = new SecurityLevel("LOW", 0);
         SecurityLevel high = new SecurityLevel("HIGH", 1);
-        
+
         rf.createSecurityLevel(low);
         rf.createSecurityLevel(high);
 
@@ -80,22 +66,41 @@ public class SecureSystem
             String instructionList1FileName = args[0];
             String instructionList2FileName = args[1];
 
-            System.out.println("Reading from file (1): " + instructionList1FileName + "\n");
+            System.out.println("Reading from file (1): " + instructionList1FileName);
             System.out.println("Reading from file (2): " + instructionList2FileName + "\n");
 
             Scanner ilFile1 = new Scanner(new File(instructionList1FileName));
-            Scanner ilFile2 = new Scanner(new File(instructionList1FileName));
-            
+            Scanner ilFile2 = new Scanner(new File(instructionList2FileName));
+
+            SubjectProcessor sp1 = new SubjectProcessor(rf);
+            SubjectProcessor sp2 = new SubjectProcessor(rf);
+
+            // -- instruction file 1
             while (ilFile1.hasNextLine())
             {
                 String instruction = ilFile1.nextLine();
-                InstructionObject result = rf.performInstruction(instruction);
-                System.out.println(result.getOutput());
-                if (DEBUG)
-                {
-                    printState();
-                }
+                sp1.addInstruction(instruction);
             }
+            // -- instruction file 2
+            while (ilFile2.hasNextLine())
+            {
+                String instruction = ilFile2.nextLine();
+                sp2.addInstruction(instruction);
+            }
+
+            sp1.start();
+            sp2.start();
+
+            try
+            {
+                sp1.getThread().join();
+                sp2.getThread().join();
+            }
+            catch (InterruptedException e)
+            {
+                System.err.println("Interrupted when joining.");
+            }
+
         }
         catch (FileNotFoundException e)
         {

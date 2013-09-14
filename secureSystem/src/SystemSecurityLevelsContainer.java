@@ -21,17 +21,17 @@ public class SystemSecurityLevelsContainer
      * @param s
      * @return 
      */
-    public static boolean contains(Object o)
+    public static synchronized boolean contains(Object o)
     {
         return slSet.contains(o);
     }
 
-    public static boolean add(SecurityLevel sl)
+    public static synchronized boolean add(SecurityLevel sl)
     {
         return slSet.add(sl);
     }
 
-    public static Set<SecurityLevel> getAllSecurityLevels()
+    public static synchronized Set<SecurityLevel> getAllSecurityLevels()
     {
         return slSet;
     }

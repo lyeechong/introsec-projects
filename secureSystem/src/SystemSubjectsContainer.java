@@ -23,20 +23,21 @@ public class SystemSubjectsContainer
 
     /**
      * Returns the SystemSubject, or null if it does not exist
+     *
      * @param s
-     * @return 
+     * @return
      */
-    public static SystemSubject get(String s)
+    public static synchronized SystemSubject get(String s)
     {
         return ssHash.get(s.toLowerCase());
     }
 
-    public static SystemSubject put(String key, SystemSubject value)
+    public static synchronized SystemSubject put(String key, SystemSubject value)
     {
         return ssHash.put(key.toLowerCase(), value);
     }
 
-    public static Set<String> getKeys()
+    public static synchronized Set<String> getKeys()
     {
         return ssHash.keySet();
     }
