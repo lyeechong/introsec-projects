@@ -1,0 +1,6 @@
+write Hal HObj 
+read Hal 
+read Hal LObj 
+write Hal LObj 200
+read Hal HObj
+Hi Lyle,This is Hal
