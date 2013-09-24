@@ -6,16 +6,13 @@
 public class InstructionChecker
 {
 
-    private static String WRITE_INSTRUCTION = "write";
-    private static String READ_INSTRUCTION = "read";
-
     public InstructionChecker()
     {
     }
 
     public boolean isInstructionIsLegal(String instruction)
     {
-        boolean valid = false;        
+        boolean valid = false;
 
         valid = instructionNotEmptyOrNull(instruction)
                 && (validRead(instruction) || validWrite(instruction));
@@ -77,7 +74,7 @@ public class InstructionChecker
         boolean valid = false;
 
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 4
-                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(WRITE_INSTRUCTION)
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.WRITE.name())
                 && validValue(TokenHelper.obtainTokenAtIndex(instruction, 3))
                 && subjectExists(TokenHelper.getSubjectName(instruction))
                 && objectExists(TokenHelper.getObjectName(instruction));
@@ -94,10 +91,38 @@ public class InstructionChecker
     {
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
-                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(READ_INSTRUCTION)
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.READ.name())
                 && subjectExists(TokenHelper.getSubjectName(instruction))
                 && objectExists(TokenHelper.getObjectName(instruction));
 
+        return valid;
+    }
+
+    private boolean validCreate(String instruction)
+    {
+        boolean valid = false;
+        valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.CREATE.name())
+                && subjectExists(TokenHelper.getSubjectName(instruction));
+        return valid;
+    }
+
+    private boolean validDestroy(String instruction)
+    {
+        boolean valid = false;
+        valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.DESTROY.name())
+                && subjectExists(instruction)
+                && objectExists(instruction);
+        return valid;
+    }
+
+    private boolean validRun(String instruction)
+    {
+        boolean valid = false;
+        valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 2
+                && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.RUN.name())
+                && subjectExists(instruction);
         return valid;
     }
 }

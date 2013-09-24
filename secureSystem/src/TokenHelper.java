@@ -16,12 +16,27 @@ public class TokenHelper
 
     public static boolean isRead(String inst)
     {
-        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase("read");
+        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase(Instructions.READ.name());
     }
 
     public static boolean isWrite(String inst)
     {
-        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase("write");
+        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase(Instructions.WRITE.name());
+    }
+    
+    public static boolean isCreate(String inst)
+    {
+        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase(Instructions.CREATE.name());
+    }
+    
+    public static boolean isDestroy(String inst)
+    {
+        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase(Instructions.DESTROY.name());
+    }
+    
+    public static boolean isRun(String inst)
+    {
+        return obtainTokenAtIndex(inst, 0).equalsIgnoreCase(Instructions.RUN.name());
     }
 
     public static String getSubjectName(String inst)

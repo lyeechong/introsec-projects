@@ -21,8 +21,8 @@ public class ReferenceMonitor
     public ReferenceMonitor()
     {
         instructionChecker = new InstructionChecker();
-        objectManager = new ObjectManager();
         cc = new ClearanceChecker();
+        objectManager = new ObjectManager(this, cc);        
     }
 
     /**
@@ -99,5 +99,11 @@ public class ReferenceMonitor
     public void createSecurityLevel(SecurityLevel sl)
     {
         SystemSecurityLevelsContainer.add(sl);
+    }
+    
+    public void deleteObject(SystemObject so)
+    {
+        SystemObjectsContainer.remove(so.getName());
+        cc.deleteObject(so);
     }
 }

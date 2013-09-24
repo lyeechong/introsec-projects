@@ -40,4 +40,9 @@ public class SystemObjectsContainer
     {
         return soHash.keySet();
     }
+    
+    public static void remove(String name)
+    {
+        soHash.remove(name);
+    }
 }

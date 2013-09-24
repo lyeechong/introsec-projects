@@ -22,6 +22,11 @@ public class ClearanceChecker
         subjectSecurityMap = new HashMap<>();
         objectSecurityMap = new HashMap<>();
     }
+    
+    public void deleteObject(SystemObject so)
+    {
+        objectSecurityMap.remove(so);
+    }
 
     public boolean hasClearance(SystemSubject ss, SystemObject so, String instruction)
     {
@@ -47,7 +52,7 @@ public class ClearanceChecker
                 hasClearance = false;
             }
         }
-        else if (TokenHelper.isWrite(instruction))
+        else if (TokenHelper.isWrite(instruction) || TokenHelper.isDestroy(instruction))
         {
             //write up
             if (ssSL.compareTo(soSL) <= 0)
@@ -76,5 +81,10 @@ public class ClearanceChecker
     public void setObjectClearance(SystemObject so, SecurityLevel sl)
     {
         objectSecurityMap.put(so, sl);
+    }
+
+    public SecurityLevel getSubjectClearance(SystemSubject ss)
+    {
+        return subjectSecurityMap.get(ss);
     }
 }

@@ -73,7 +73,7 @@ public class SecureSystem
         {
             if (args.length != 1)
             {
-                System.err.println("Wrong number of arguments. Expected: 1, actual: " + args.length);
+                System.err.println("Wrong number of arguments. Expected: 100, actual: " + args.length);
                 return;
             }
 
