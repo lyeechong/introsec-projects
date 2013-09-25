@@ -43,44 +43,77 @@ public class SystemSubject
      */
     public void setBit(int newBit) //assume this stuff works
     {
+        /*
         initialCounter--;
         if (newBit == 1)
         {
-            bit = bit << 1;
-            bit |= newBit;
-            bit &= 255;
-            receivingThroughCovert = true;
+        bit = bit << 1;
+        bit |= newBit;
+        bit &= 255;
+        receivingThroughCovert = true;
         }
         else if (newBit == 0)
         {
-            bit = bit << 1;
-            bit &= newBit;
-            bit &= 255;
+        bit = bit << 1;
+        bit &= newBit;
+        bit &= 255;
         }
         else
         {
-            assert false;
+        assert false;
         }
-
+        
         if ((bit & 255) == 0 && receivingThroughCovert && initialCounter <= 0)
         {
-            receivingThroughCovert = false;
+        receivingThroughCovert = false;
         }
         
         System.out.println("bit received is :: " + newBit);
-
+        
         if (receivingThroughCovert)
         {
-            counter++;
-            if (counter == 8)
+        counter++;
+        if (counter == 8)
+        {
+        for (int i = 0; i < 100; i++)
+        {
+        System.out.println("Byte received! :: " + bit);
+        }
+        bit = 0;
+        counter = 0;
+        }
+        }
+         * */
+        int next = newBit;
+        if (al.size() != 8)
+        {
+            for (int i = 0; i < 8; i++)
             {
-                for (int i = 0; i < 100; i++)
-                {
-                    System.out.println("Byte received! :: " + bit);
-                }
-                bit = 0;
-                counter = 0;
+                al.add(0);
             }
+        }
+        al.add(next);
+        init--;
+
+        System.out.println("hello " + next);
+        al.remove(0);
+        done = true && init < 0;
+        for (int i : al)
+        {
+            if (i != 0)
+            {
+                done = false;
+            }
+        }
+        if (cnt >= 8)
+        {
+            cnt = 0;
+            System.out.println("-------------------------the al was :: " + al.toString().replaceAll("[\\[\\], ]", ""));
+        }
+        cnt++;
+        if (done == true)
+        {
+            receivingThroughCovert = false;
         }
     }
 
@@ -93,6 +126,7 @@ public class SystemSubject
     {
         this.name = name;
         temp = 0;
+        al = new ArrayList<>();
     }
 
     public void setTempValue(int value)
@@ -157,6 +191,10 @@ public class SystemSubject
 
         return instructionList;
     }
+    List<Integer> al;
+    boolean done = false;
+    int init = 8;
+    int cnt = 0;
 
     private int getNextBit() throws IOException //works
     {
