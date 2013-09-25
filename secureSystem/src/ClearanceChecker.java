@@ -40,7 +40,7 @@ public class ClearanceChecker
             return false;
         }
 
-        if (TokenHelper.isRead(instruction))
+        if (InstructionChecker.validRead(instruction))
         {
             //read down
             if (ssSL.compareTo(soSL) >= 0)
@@ -52,7 +52,7 @@ public class ClearanceChecker
                 hasClearance = false;
             }
         }
-        else if (TokenHelper.isWrite(instruction) || TokenHelper.isDestroy(instruction))
+        else if (InstructionChecker.validWrite(instruction) || InstructionChecker.validDestroy(instruction))
         {
             //write up
             if (ssSL.compareTo(soSL) <= 0)

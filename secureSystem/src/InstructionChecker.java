@@ -6,11 +6,11 @@
 public class InstructionChecker
 {
 
-    public InstructionChecker()
+    private InstructionChecker()
     {
     }
 
-    public boolean isInstructionIsLegal(String instruction)
+    public static boolean isInstructionIsLegal(String instruction)
     {
         boolean valid = false;
 
@@ -20,7 +20,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean instructionNotEmptyOrNull(String instruction)
+    public static boolean instructionNotEmptyOrNull(String instruction)
     {
         boolean valid = false;
 
@@ -29,7 +29,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean subjectExists(String subject)
+    public static boolean subjectExists(String subject)
     {
         boolean valid = false;
 
@@ -38,7 +38,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean objectExists(String object)
+    public static boolean objectExists(String object)
     {
         boolean valid = false;
 
@@ -52,7 +52,7 @@ public class InstructionChecker
      * @param value
      * @return 
      */
-    private boolean validValue(String value)
+    public static boolean validValue(String value)
     {
         boolean valid = false;
 
@@ -69,7 +69,7 @@ public class InstructionChecker
      * @param instruction
      * @return 
      */
-    private boolean validWrite(String instruction)
+    public static boolean validWrite(String instruction)
     {
         boolean valid = false;
 
@@ -87,7 +87,7 @@ public class InstructionChecker
      * @param instruction
      * @return 
      */
-    private boolean validRead(String instruction)
+    public static boolean validRead(String instruction)
     {
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
@@ -98,7 +98,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean validCreate(String instruction)
+    public static boolean validCreate(String instruction)
     {
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
@@ -107,7 +107,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean validDestroy(String instruction)
+    public static boolean validDestroy(String instruction)
     {
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
@@ -117,7 +117,7 @@ public class InstructionChecker
         return valid;
     }
 
-    private boolean validRun(String instruction)
+    public static boolean validRun(String instruction)
     {
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 2

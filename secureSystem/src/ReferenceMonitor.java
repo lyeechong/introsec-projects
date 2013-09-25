@@ -11,18 +11,13 @@
 public class ReferenceMonitor
 {
 
-    InstructionChecker instructionChecker;
-    ObjectManager objectManager;
-    ClearanceChecker cc;
-
     /**
      * Constructor. Inits the subjectSecurityMap and the objectSecurityMap.
      */
     public ReferenceMonitor()
     {
-        instructionChecker = new InstructionChecker();
-        cc = new ClearanceChecker();
-        objectManager = new ObjectManager(this, cc);        
+        StaticStuff.setCc(new ClearanceChecker());
+        StaticStuff.setOm(new ObjectManager());
     }
 
     /**
@@ -30,17 +25,17 @@ public class ReferenceMonitor
      * @param instruction
      * @return 
      */
-    public InstructionObject performInstruction(String instruction)
+    public Instruction performInstruction(String instruction)
     {
         instruction = instruction.trim(); // -- I don't think the user will mind.
-        
-        InstructionObject result = new InstructionObject("Something went terribly wrong.");
 
-        boolean validInstruction = instructionChecker.isInstructionIsLegal(instruction);
+        Instruction instructionObject = null;
+
+        boolean validInstruction = InstructionChecker.isInstructionIsLegal(instruction);
         if (!validInstruction) //syntax checking only
         {
             // -- the instruction was illegal, so generate a BadInstruction
-            return new BadInstruction("Bad Instruction");
+            return new BadInstruction("Bad Instruction", false);
         }
 
         // -- check the security clearance stuff here
@@ -50,15 +45,15 @@ public class ReferenceMonitor
 
         SystemSubject ss = SystemSubjectsContainer.get(subjectName);
         SystemObject so = SystemObjectsContainer.get(objectName);
-        boolean hasClearance = cc.hasClearance(ss, so, instruction);
+        boolean hasClearance = StaticStuff.getCc().hasClearance(ss, so, instruction);
 
-        if (TokenHelper.isRead(instruction))
+        if (InstructionChecker.validRead(instruction))
         {
-            result = new InstructionObject(subjectName + " reads " + objectName);
+            instructionObject = new ReadInstruction(instruction, hasClearance);
         }
-        else if (TokenHelper.isWrite(instruction))
+        else if (InstructionChecker.validWrite(instruction))
         {
-            result = new InstructionObject(subjectName + " writes value " + TokenHelper.obtainTokenAtIndex(instruction, 3) + " to " + objectName);
+            instructionObject = new WriteInstruction(instruction, hasClearance);
         }
         else
         {
@@ -68,42 +63,34 @@ public class ReferenceMonitor
         if (hasClearance)
         {
             // -- perform the instruction since it was valid (via the ObjectManager)
-            objectManager.performInstruction(instruction);
-        }
-        else
-        {
-            // -- just set the temp value of the subject to zero
-            if (TokenHelper.isRead(instruction))
-            {
-                objectManager.performUnauthorizedRead(instruction);
-            }
+            StaticStuff.getOm().performInstruction(instructionObject);
         }
 
-        return result;
+        return instructionObject;
     }
 
     public void createSubject(String name, SecurityLevel securityLevel)
     {
         SystemSubject ss = new SystemSubject(name);
-        cc.setSubjectClearance(ss, securityLevel);
+        StaticStuff.getCc().setSubjectClearance(ss, securityLevel);
         SystemSubjectsContainer.put(name, ss);
     }
 
     public void createObject(String name, SecurityLevel securityLevel, int value)
     {
         SystemObject so = new SystemObject(name, value);
-        cc.setObjectClearance(so, securityLevel);
+        StaticStuff.getCc().setObjectClearance(so, securityLevel);
         SystemObjectsContainer.put(name, so);
     }
-    
+
     public void createSecurityLevel(SecurityLevel sl)
     {
         SystemSecurityLevelsContainer.add(sl);
     }
-    
+
     public void deleteObject(SystemObject so)
     {
         SystemObjectsContainer.remove(so.getName());
-        cc.deleteObject(so);
+        StaticStuff.getCc().deleteObject(so);
     }
 }

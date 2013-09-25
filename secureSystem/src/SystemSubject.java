@@ -1,4 +1,12 @@
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A subject in the system. eg. Hal
  *
@@ -16,14 +24,26 @@ public class SystemSubject
      */
     private int temp;
     private int bit;
-    private static int counter;
-    private boolean receivingThroughCovert = true;
+    private int counter;
+    private boolean receivingThroughCovert = true; //low level specifically
+    private boolean runningCovertChannel = false; //high level specifically
+    private ByteInput bi;
+    private String covertInputMessageFilename;
 
     public String getName()
     {
         return name;
     }
+    
+    public void setCovertInputMessage(String covertInputMessageFilename)
+    {
+        this.covertInputMessageFilename = covertInputMessageFilename;
+    }
 
+    /**
+     * Consumes new bits from Hal and when it reaches 8, it prints it out.
+     * @param newBit 
+     */
     public void setBit(int newBit)
     {
         if (newBit == 1)
@@ -52,6 +72,10 @@ public class SystemSubject
         if (receivingThroughCovert)
         {
             counter++;
+            if (counter == 8)
+            {
+                System.out.println("Byte received! :: " + bit);
+            }
         }
     }
 
@@ -63,6 +87,7 @@ public class SystemSubject
     public SystemSubject(String name)
     {
         this.name = name;
+
         temp = 0;
     }
 
@@ -71,23 +96,71 @@ public class SystemSubject
         temp = value;
     }
 
-    public void run()
+    public List<Instruction> run()
     {
-        boolean isHighLevelSubject = 
-        
-        
-        
-        
-        
-        
-        if (true)
+        SystemSubject ss = SystemSubjectsContainer.get(this.getName());
+        boolean isHighLevelSubject = StaticStuff.getCc().getSubjectClearance(ss).getName().equalsIgnoreCase("HIGH");
+        List<Instruction> instructionList = new ArrayList<>();
+
+        if (isHighLevelSubject)
         {
-            //do high
+            // -- Do high
+            
+            // determine if the next bit is a 1 or a 0            
+            int nextBit = 100;
+            try
+            {
+                nextBit = getNextBit();
+            }
+            catch (IOException ex)
+            {
+                System.err.println("Something went wrong: " + ex.getMessage());
+            }
+            
+            if(nextBit == 1)
+            {
+                // don't create the object
+            }
+            else if(nextBit == 0)
+            {
+                // create the object
+                instructionList.add(new CreateInstruction("create Hal obj", true));
+            }
+            else
+            {
+                assert false;
+            }
+
+            instructionList.add(new RunInstruction("run Lyle", true));
         }
         else
         {
-            //do low level stuff
+            // -- Do low level stuff
+            if(receivingThroughCovert)
+            {
+                setBit(temp);
+            }
+            
+            instructionList.add(new RunInstruction("create Lyle obj", true));
+            instructionList.add(new RunInstruction("write Lyle obj 1", true));
+            instructionList.add(new RunInstruction("read Lyle obj", true));
+            instructionList.add(new RunInstruction("destroy Lyle obj", true));
+            instructionList.add(new RunInstruction("run Hal", true));
         }
 
+        return instructionList;
     }
+
+    private int getNextBit() throws IOException
+    {
+        if (!runningCovertChannel)
+        {
+            //set up the covert channel
+            assert covertInputMessageFilename != null;
+            bi = new ByteInput(covertInputMessageFilename);
+        }
+        int next = bi.getNextBit();
+        return next;
+    }
+    
 }

@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class SecureSystem
 {
 
-    ReferenceMonitor rf;
     final boolean DEBUG = true;
 
     /**
@@ -26,7 +25,7 @@ public class SecureSystem
 
     public SecureSystem()
     {
-        rf = new ReferenceMonitor();
+        StaticStuff.setRf(new ReferenceMonitor());
     }
 
     private void printState()
@@ -50,20 +49,20 @@ public class SecureSystem
 
         SecurityLevel low = new SecurityLevel("LOW", 0);
         SecurityLevel high = new SecurityLevel("HIGH", 1);
-        
-        rf.createSecurityLevel(low);
-        rf.createSecurityLevel(high);
+
+        StaticStuff.getRf().createSecurityLevel(low);
+        StaticStuff.getRf().createSecurityLevel(high);
 
         // We add two subjects, one high and one low.
 
-        rf.createSubject("Lyle", low);
-        rf.createSubject("Hal", high);
+        StaticStuff.getRf().createSubject("Lyle", low);
+        StaticStuff.getRf().createSubject("Hal", high);
 
 
         // We add two objects, one high and one low.
 
-        rf.createObject("Lobj", low, 0);
-        rf.createObject("Hobj", high, 0);
+        StaticStuff.getRf().createObject("Lobj", low, 0);
+        StaticStuff.getRf().createObject("Hobj", high, 0);
     }
 
     private void run(String[] args)
@@ -87,8 +86,7 @@ public class SecureSystem
             while (ilFile.hasNextLine())
             {
                 String instruction = ilFile.nextLine();
-                InstructionObject result = rf.performInstruction(instruction);
-                System.out.println(result.getOutput());
+                Instruction result = StaticStuff.getRf().performInstruction(instruction);
                 if (DEBUG)
                 {
                     printState();

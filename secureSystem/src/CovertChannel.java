@@ -23,7 +23,25 @@ public class CovertChannel
     public static void main(String[] args)
     {
         CovertChannel cc = new CovertChannel();
+        cc.setup();
         cc.run(args);
+    }
+
+    private void setup()
+    {
+        // LOW and HIGH are constants defined in the SecurityLevel 
+        // class, such that HIGH dominates LOW.
+
+        SecurityLevel low = new SecurityLevel("LOW", 0);
+        SecurityLevel high = new SecurityLevel("HIGH", 1);
+
+        StaticStuff.getRf().createSecurityLevel(low);
+        StaticStuff.getRf().createSecurityLevel(high);
+
+        // We add two subjects, one high and one low.
+
+        StaticStuff.getRf().createSubject("Lyle", low);
+        StaticStuff.getRf().createSubject("Hal", high);
     }
 
     private void run(String[] args)
@@ -31,40 +49,29 @@ public class CovertChannel
         int numArgs = args.length;
         String inputFileName;
 
-        try
+        if (numArgs > 2)
         {
-            if (numArgs > 2)
-            {
-                System.err.println("Wrong number of arguments. Expected: 100 or 2, actual: " + numArgs);
-                return;
-            }
-
-            if (numArgs == 2)
-            {
-                verbose = args[0].equalsIgnoreCase("v");
-                inputFileName = args[1];
-            }
-            else if (numArgs == 1)
-            {
-                inputFileName = args[0];
-            }
-            else
-            {
-                inputFileName = null;
-                assert false;
-            }
-
-            Scanner inputFile = new Scanner(new File(inputFileName));
-
-            while (inputFile.hasNextLine())
-            {
-                String line = inputFile.nextLine();
-                System.out.println(line); //testing
-            }
+            System.err.println("Wrong number of arguments. Expected: 100 or 2, actual: " + numArgs);
+            return;
         }
-        catch (FileNotFoundException e)
+
+        if (numArgs == 2)
         {
-            System.err.println("Could not find the input file!");
+            verbose = args[0].equalsIgnoreCase("v");
+            inputFileName = args[1];
         }
+        else if (numArgs == 1)
+        {
+            inputFileName = args[0];
+        }
+        else
+        {
+            inputFileName = null;
+            assert false;
+        }
+
+        SystemSubjectsContainer.get("Hal").setCovertInputMessage(inputFileName);
+        StaticStuff.getRf().performInstruction("run Hal");
+
     }
 }

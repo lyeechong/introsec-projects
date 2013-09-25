@@ -7,11 +7,23 @@
  *
  * @author lchong
  */
-public class BadInstruction extends InstructionObject
+public class BadInstruction extends Instruction
 {
 
-    public BadInstruction(String message)
+    public BadInstruction(String instructionString, boolean hasClearance)
     {
-        super(message);
+        super(instructionString, hasClearance);
+    }
+
+    @Override
+    protected void execute()
+    {
+        // do nothing
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Bad instruction.";
     }
 }
