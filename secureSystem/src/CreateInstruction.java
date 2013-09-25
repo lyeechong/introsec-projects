@@ -18,12 +18,16 @@ public class CreateInstruction extends Instruction
     protected void execute()
     {
         String objName = TokenHelper.getObjectName(getInstructionString());
-        String ssName = TokenHelper.getSubjectName(getInstructionString());
-        SystemSubject ss = SystemSubjectsContainer.get(ssName);
-        SecurityLevel securityLevel = StaticStuff.getCc().getSubjectClearance(ss);
-        StaticStuff.getRf().createObject(objName, securityLevel, 0);
-        assert objName.equals("obj");     
-        assert SystemObjectsContainer.get(objName) != null;
+        if (SystemObjectsContainer.get(objName) == null)
+        {
+            String ssName = TokenHelper.getSubjectName(getInstructionString());
+            SystemSubject ss = SystemSubjectsContainer.get(ssName);
+            SecurityLevel securityLevel = StaticStuff.getCc().getSubjectClearance(ss);
+            assert securityLevel != null;
+            StaticStuff.getRf().createObject(objName, new SecurityLevel(securityLevel.getName(), securityLevel.getLevel()), 0);
+            assert objName.equals("obj");
+            assert SystemObjectsContainer.get(objName) != null;
+        }
     }
 
     @Override

@@ -32,7 +32,7 @@ public class ClearanceChecker
     {
         boolean hasClearance = false;
 
-        SecurityLevel ssSL = subjectSecurityMap.get(ss);
+        SecurityLevel ssSL = subjectSecurityMap.get(ss);        
         SecurityLevel soSL = objectSecurityMap.get(so);
 
         if (InstructionChecker.validRead(instruction))
@@ -93,5 +93,10 @@ public class ClearanceChecker
     public SecurityLevel getSubjectClearance(SystemSubject ss)
     {
         return subjectSecurityMap.get(ss);
+    }
+
+    public SecurityLevel getObjectClearance(SystemObject so)
+    {
+        return subjectSecurityMap.get(so);
     }
 }

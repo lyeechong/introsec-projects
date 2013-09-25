@@ -1,9 +1,5 @@
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +41,7 @@ public class SystemSubject
      * Consumes new bits from Hal and when it reaches 8, it prints it out.
      * @param newBit 
      */
-    public void setBit(int newBit)
+    public void setBit(int newBit) //assume this stuff works
     {
         initialCounter--;
         if (newBit == 1)
@@ -70,6 +66,8 @@ public class SystemSubject
         {
             receivingThroughCovert = false;
         }
+        
+        System.out.println("bit received is :: " + newBit);
 
         if (receivingThroughCovert)
         {
@@ -94,7 +92,6 @@ public class SystemSubject
     public SystemSubject(String name)
     {
         this.name = name;
-
         temp = 0;
     }
 
@@ -161,7 +158,7 @@ public class SystemSubject
         return instructionList;
     }
 
-    private int getNextBit() throws IOException
+    private int getNextBit() throws IOException //works
     {
         if (!runningCovertChannel)
         {

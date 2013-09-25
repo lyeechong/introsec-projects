@@ -11,9 +11,11 @@
 public class ReadInstruction extends Instruction
 {
 
+    boolean igiveup;
     public ReadInstruction(String instructionString, boolean hasClearance)
     {
         super(instructionString, hasClearance);
+        this.igiveup = hasClearance;
     }
 
     @Override
@@ -21,7 +23,8 @@ public class ReadInstruction extends Instruction
     {
         String subjName = TokenHelper.getSubjectName(getInstructionString());
         SystemSubject ss = SystemSubjectsContainer.get(subjName);
-        if (hasClearance())
+        
+        if (igiveup)
         {
             String objName = TokenHelper.getObjectName(getInstructionString());
             SystemObject so = SystemObjectsContainer.get(objName);

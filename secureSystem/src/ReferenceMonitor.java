@@ -20,6 +20,22 @@ public class ReferenceMonitor
         StaticStuff.setOm(new ObjectManager());
     }
 
+    private void printState(String ins)
+    {
+        System.out.println("The current state before the instruction: " + ins);
+        for (String key : SystemObjectsContainer.getKeys())
+        {
+            SecurityLevel sl = StaticStuff.getCc().getObjectClearance(SystemObjectsContainer.get(key));
+
+            System.out.println("\t" + key + " has value: " + SystemObjectsContainer.get(key).getValue() + " with clearance ");
+        }
+        for (String key : SystemSubjectsContainer.getKeys())
+        {
+            System.out.println("\t" + key + " has recently read: " + SystemSubjectsContainer.get(key).getTemp() + " with clearance " + StaticStuff.getCc().getSubjectClearance(SystemSubjectsContainer.get(key)));
+        }
+        System.out.println("");
+    }
+
     /**
      * Performs the instruction, checking the clearnce and syntax of the instruction before asking the ObjectManager to perform it.
      * @param instruction
@@ -27,16 +43,18 @@ public class ReferenceMonitor
      */
     public Instruction performInstruction(String instruction)
     {
+        //printState(instruction);
+
+
         instruction = instruction.trim(); // -- I don't think the user will mind.
 
         Instruction instructionObject = null;
 
         boolean validInstruction = InstructionChecker.isInstructionIsLegal(instruction);
 
-        System.out.println("Instruction :: " + instruction);
         if (!validInstruction) //syntax checking only
         {
-            System.out.println("\t bad instru :: " + instruction );
+            System.out.println("\t !!! Bad instruction !!! :: " + instruction);
             // -- the instruction was illegal, so generate a BadInstruction
             BadInstruction bi = new BadInstruction("Bad Instruction", false);
             bi.exec();
@@ -83,11 +101,9 @@ public class ReferenceMonitor
         {
             assert false;
         }
-        if (hasClearance)
-        {
-            // -- perform the instruction since it was valid (via the ObjectManager)
-            StaticStuff.getOm().performInstruction(instructionObject);
-        }
+        // -- perform the instruction since it was valid (via the ObjectManager)
+        StaticStuff.getOm().performInstruction(instructionObject);
+
 
         return instructionObject;
     }

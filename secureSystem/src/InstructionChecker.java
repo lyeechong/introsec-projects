@@ -111,8 +111,7 @@ public class InstructionChecker
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
                 && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.DESTROY.name())
-                && subjectExists(TokenHelper.getSubjectName(instruction))
-                && objectExists(TokenHelper.getObjectName(instruction));
+                && subjectExists(TokenHelper.getSubjectName(instruction));                
         return valid;
     }
 
