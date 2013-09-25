@@ -22,7 +22,7 @@ public class ClearanceChecker
         subjectSecurityMap = new HashMap<>();
         objectSecurityMap = new HashMap<>();
     }
-    
+
     public void deleteObject(SystemObject so)
     {
         objectSecurityMap.remove(so);
@@ -35,13 +35,12 @@ public class ClearanceChecker
         SecurityLevel ssSL = subjectSecurityMap.get(ss);
         SecurityLevel soSL = objectSecurityMap.get(so);
 
-        if (ssSL == null || soSL == null)
-        {
-            return false;
-        }
-
         if (InstructionChecker.validRead(instruction))
         {
+            if (ssSL == null || soSL == null)
+            {
+                return false;
+            }
             //read down
             if (ssSL.compareTo(soSL) >= 0)
             {
@@ -54,6 +53,10 @@ public class ClearanceChecker
         }
         else if (InstructionChecker.validWrite(instruction) || InstructionChecker.validDestroy(instruction))
         {
+            if (ssSL == null || soSL == null)
+            {
+                return false;
+            }
             //write up
             if (ssSL.compareTo(soSL) <= 0)
             {
@@ -63,6 +66,10 @@ public class ClearanceChecker
             {
                 hasClearance = false;
             }
+        }
+        else if (InstructionChecker.validCreate(instruction) || InstructionChecker.validDestroy(instruction) || InstructionChecker.validRun(instruction))
+        {
+            hasClearance = true;
         }
         else
         {

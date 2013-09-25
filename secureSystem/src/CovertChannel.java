@@ -35,6 +35,8 @@ public class CovertChannel
         SecurityLevel low = new SecurityLevel("LOW", 0);
         SecurityLevel high = new SecurityLevel("HIGH", 1);
 
+        StaticStuff.setRf(new ReferenceMonitor());
+        
         StaticStuff.getRf().createSecurityLevel(low);
         StaticStuff.getRf().createSecurityLevel(high);
 
@@ -42,6 +44,7 @@ public class CovertChannel
 
         StaticStuff.getRf().createSubject("Lyle", low);
         StaticStuff.getRf().createSubject("Hal", high);
+        
     }
 
     private void run(String[] args)

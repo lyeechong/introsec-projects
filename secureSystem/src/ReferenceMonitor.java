@@ -32,20 +32,32 @@ public class ReferenceMonitor
         Instruction instructionObject = null;
 
         boolean validInstruction = InstructionChecker.isInstructionIsLegal(instruction);
+
+        System.out.println("Instruction :: " + instruction);
         if (!validInstruction) //syntax checking only
         {
+            System.out.println("\t bad instru :: " + instruction );
             // -- the instruction was illegal, so generate a BadInstruction
-            return new BadInstruction("Bad Instruction", false);
+            BadInstruction bi = new BadInstruction("Bad Instruction", false);
+            bi.exec();
+            return bi;
         }
 
         // -- check the security clearance stuff here
+        boolean hasClearance;
+        if (TokenHelper.getNumberOfTokensInInstruction(instruction) > 2)
+        {
+            String subjectName = TokenHelper.getSubjectName(instruction);
+            String objectName = TokenHelper.getObjectName(instruction);
 
-        String subjectName = TokenHelper.getSubjectName(instruction);
-        String objectName = TokenHelper.getObjectName(instruction);
-
-        SystemSubject ss = SystemSubjectsContainer.get(subjectName);
-        SystemObject so = SystemObjectsContainer.get(objectName);
-        boolean hasClearance = StaticStuff.getCc().hasClearance(ss, so, instruction);
+            SystemSubject ss = SystemSubjectsContainer.get(subjectName);
+            SystemObject so = SystemObjectsContainer.get(objectName);
+            hasClearance = StaticStuff.getCc().hasClearance(ss, so, instruction);
+        }
+        else
+        {
+            hasClearance = true;
+        }
 
         if (InstructionChecker.validRead(instruction))
         {
@@ -55,11 +67,22 @@ public class ReferenceMonitor
         {
             instructionObject = new WriteInstruction(instruction, hasClearance);
         }
+        else if (InstructionChecker.validCreate(instruction))
+        {
+            instructionObject = new CreateInstruction(instruction, hasClearance);
+        }
+        else if (InstructionChecker.validDestroy(instruction))
+        {
+            instructionObject = new DestroyInstruction(instruction, hasClearance);
+        }
+        else if (InstructionChecker.validRun(instruction))
+        {
+            instructionObject = new RunInstruction(instruction, hasClearance);
+        }
         else
         {
             assert false;
         }
-
         if (hasClearance)
         {
             // -- perform the instruction since it was valid (via the ObjectManager)

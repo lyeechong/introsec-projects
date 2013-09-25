@@ -22,6 +22,8 @@ public class CreateInstruction extends Instruction
         SystemSubject ss = SystemSubjectsContainer.get(ssName);
         SecurityLevel securityLevel = StaticStuff.getCc().getSubjectClearance(ss);
         StaticStuff.getRf().createObject(objName, securityLevel, 0);
+        assert objName.equals("obj");     
+        assert SystemObjectsContainer.get(objName) != null;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ObjectManager
             instruction.exec();
         }
         else if (instruction.getClass().equals(CreateInstruction.class))
-        {
+        {            
             instruction.exec();
         }
         else if (instruction.getClass().equals(DestroyInstruction.class))

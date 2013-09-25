@@ -23,7 +23,6 @@ public class TokenHelper
 
     public static String getObjectName(String inst)
     {
-
         return obtainTokenAtIndex(inst, 2);
     }
 

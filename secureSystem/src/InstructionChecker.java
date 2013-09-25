@@ -15,7 +15,7 @@ public class InstructionChecker
         boolean valid = false;
 
         valid = instructionNotEmptyOrNull(instruction)
-                && (validRead(instruction) || validWrite(instruction));
+                && (validRead(instruction) || validWrite(instruction) || validCreate(instruction) || validDestroy(instruction) || validRun(instruction));
 
         return valid;
     }
@@ -52,7 +52,7 @@ public class InstructionChecker
      * @param value
      * @return 
      */
-    public static boolean validValue(String value)
+    public static boolean acceptableValueToWrite(String value)
     {
         boolean valid = false;
 
@@ -75,10 +75,9 @@ public class InstructionChecker
 
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 4
                 && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.WRITE.name())
-                && validValue(TokenHelper.obtainTokenAtIndex(instruction, 3))
+                && acceptableValueToWrite(TokenHelper.obtainTokenAtIndex(instruction, 3))
                 && subjectExists(TokenHelper.getSubjectName(instruction))
                 && objectExists(TokenHelper.getObjectName(instruction));
-
         return valid;
     }
 
@@ -112,8 +111,8 @@ public class InstructionChecker
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 3
                 && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.DESTROY.name())
-                && subjectExists(instruction)
-                && objectExists(instruction);
+                && subjectExists(TokenHelper.getSubjectName(instruction))
+                && objectExists(TokenHelper.getObjectName(instruction));
         return valid;
     }
 
@@ -122,7 +121,7 @@ public class InstructionChecker
         boolean valid = false;
         valid = TokenHelper.getNumberOfTokensInInstruction(instruction) == 2
                 && TokenHelper.obtainTokenAtIndex(instruction, 0).equalsIgnoreCase(Instructions.RUN.name())
-                && subjectExists(instruction);
+                && subjectExists(TokenHelper.getSubjectName(instruction));
         return valid;
     }
 }

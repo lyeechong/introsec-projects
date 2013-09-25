@@ -25,8 +25,8 @@ public abstract class Instruction
     
     public void exec()
     {
-        execute();
         print();
+        execute();        
     }
     
     public boolean hasClearance()

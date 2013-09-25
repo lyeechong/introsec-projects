@@ -27,6 +27,7 @@ public class SystemSubject
     private int counter;
     private boolean receivingThroughCovert = true; //low level specifically
     private boolean runningCovertChannel = false; //high level specifically
+    private int initialCounter = 8;
     private ByteInput bi;
     private String covertInputMessageFilename;
 
@@ -34,7 +35,7 @@ public class SystemSubject
     {
         return name;
     }
-    
+
     public void setCovertInputMessage(String covertInputMessageFilename)
     {
         this.covertInputMessageFilename = covertInputMessageFilename;
@@ -46,6 +47,7 @@ public class SystemSubject
      */
     public void setBit(int newBit)
     {
+        initialCounter--;
         if (newBit == 1)
         {
             bit = bit << 1;
@@ -56,7 +58,7 @@ public class SystemSubject
         else if (newBit == 0)
         {
             bit = bit << 1;
-            bit |= newBit;
+            bit &= newBit;
             bit &= 255;
         }
         else
@@ -64,7 +66,7 @@ public class SystemSubject
             assert false;
         }
 
-        if ((bit & 255) == 0 && receivingThroughCovert)
+        if ((bit & 255) == 0 && receivingThroughCovert && initialCounter <= 0)
         {
             receivingThroughCovert = false;
         }
@@ -74,7 +76,12 @@ public class SystemSubject
             counter++;
             if (counter == 8)
             {
-                System.out.println("Byte received! :: " + bit);
+                for (int i = 0; i < 100; i++)
+                {
+                    System.out.println("Byte received! :: " + bit);
+                }
+                bit = 0;
+                counter = 0;
             }
         }
     }
@@ -105,7 +112,7 @@ public class SystemSubject
         if (isHighLevelSubject)
         {
             // -- Do high
-            
+
             // determine if the next bit is a 1 or a 0            
             int nextBit = 100;
             try
@@ -116,12 +123,12 @@ public class SystemSubject
             {
                 System.err.println("Something went wrong: " + ex.getMessage());
             }
-            
-            if(nextBit == 1)
+
+            if (nextBit == 1)
             {
                 // don't create the object
             }
-            else if(nextBit == 0)
+            else if (nextBit == 0)
             {
                 // create the object
                 instructionList.add(new CreateInstruction("create Hal obj", true));
@@ -136,16 +143,19 @@ public class SystemSubject
         else
         {
             // -- Do low level stuff
-            if(receivingThroughCovert)
+            if (receivingThroughCovert)
             {
                 setBit(temp);
             }
-            
+
             instructionList.add(new RunInstruction("create Lyle obj", true));
             instructionList.add(new RunInstruction("write Lyle obj 1", true));
             instructionList.add(new RunInstruction("read Lyle obj", true));
             instructionList.add(new RunInstruction("destroy Lyle obj", true));
-            instructionList.add(new RunInstruction("run Hal", true));
+            if (receivingThroughCovert)
+            {
+                instructionList.add(new RunInstruction("run Hal", true));
+            }
         }
 
         return instructionList;
@@ -158,9 +168,9 @@ public class SystemSubject
             //set up the covert channel
             assert covertInputMessageFilename != null;
             bi = new ByteInput(covertInputMessageFilename);
+            runningCovertChannel = true;
         }
         int next = bi.getNextBit();
         return next;
     }
-    
 }

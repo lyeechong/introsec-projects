@@ -20,19 +20,20 @@ public class ByteInput
     private int valToSend;
     private final String filename;
 
-    public ByteInput(String filename)
+    public ByteInput(String filename) throws IOException
     {
         numBitsLeft = 8;
         valToSend = 0;
         this.filename = filename;
-    }
 
-    public int getNextBit() throws IOException
-    {
         if (read == null)
         {
             setup();
         }
+    }
+
+    public int getNextBit()
+    {
         int res = 0;
 
         res = (valToSend & 128);
@@ -45,7 +46,6 @@ public class ByteInput
             valToSend = getNextByte();
             numBitsLeft = 8;
         }
-
         return res;
     }
 
