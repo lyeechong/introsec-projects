@@ -86,7 +86,7 @@ public class CovertChannel
 
         long stop = System.currentTimeMillis();
         time = stop - start;
-        System.out.println(time);
+        //System.out.println(time);
 
         if (StaticStuff.isVerbose())
         {
