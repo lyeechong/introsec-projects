@@ -10,18 +10,18 @@ import java.io.IOException;
  */
 public final class MyFileWriter
 {
-    
+
     private final String outputFileName;
     private StringBuffer sb;
-    private final int SB_LIMIT = 1024;
-    
+    private final int SB_LIMIT = 512;
+
     public MyFileWriter(String outputFileName)
     {
         assert outputFileName != null;
         this.outputFileName = outputFileName;
         clearOldOutputFile();
     }
-    
+
     public void clearOldOutputFile()
     {
         clearLocalBuffer();
@@ -72,19 +72,19 @@ public final class MyFileWriter
     {
         writeString(line + "");
     }
-    
+
     public void writeLine(String line)
     {
         sb.append(line).append("\n");
         checkIfBufferIsFull();
     }
-    
+
     private void checkIfBufferIsFull()
     {
         if (sb.length() >= SB_LIMIT)
         {
-            clearLocalBuffer();
             writeOutputFile();
+            clearLocalBuffer();            
         }
     }
 
@@ -94,7 +94,6 @@ public final class MyFileWriter
     public void writeOutputFile()
     {
         String data = sb.toString(); // stuff which will be written
-
         File file = new File(outputFileName);
 
         //if file doesnt exists, then create it
@@ -109,7 +108,7 @@ public final class MyFileWriter
                 System.err.println("Something went wrong: " + ex.getMessage());
             }
         }
-        
+
         boolean appendToFile = true;
         FileWriter fileWritter = null;
         try
@@ -120,9 +119,9 @@ public final class MyFileWriter
         {
             System.err.println("Something went wrong: " + ex.getMessage());
         }
-        
+
         assert fileWritter != null;
-        
+
         try (BufferedWriter bufferWritter = new BufferedWriter(fileWritter))
         {
             bufferWritter.write(data);

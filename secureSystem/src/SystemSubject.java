@@ -2,6 +2,7 @@
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import sun.org.mozilla.javascript.internal.ast.ContinueStatement;
 
 /**
  * A subject in the system. eg. Hal
@@ -36,6 +37,10 @@ public class SystemSubject
      */
     private String covertInputMessageFilename;
     private MyFileWriter mfw;
+    private List<Integer> al;
+    private boolean done = false;
+    private int init = 8;
+    private int cnt = 0;
 
     public String getName()
     {
@@ -51,39 +56,33 @@ public class SystemSubject
      * Consumes new bits from Hal and when it reaches 8, it prints it out.
      * @param newBit 
      */
+    boolean skip = true;
     public void setBit(int newBit) //assume this stuff works
     {
+        if(skip)
+        {
+            skip = false;
+            return;
+        }
+        
         int next = newBit;
-        if (al.size() != 8)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                al.add(0);
-            }
-        }
         al.add(next);
-        init--;
 
-        al.remove(0);
-        done = true && init < 0;
-        for (int i : al)
+        if (al.size() == 8)
         {
-            if (i != 0)
+            done = !al.contains(1);
+
+            if (!done)
             {
-                done = false;
+                String byteReceived = al.toString().replaceAll("[\\[\\], ]", "");                
+                writeToOutputFile(binaryStringToAsciiChar(byteReceived));
             }
-        }
-        if (cnt >= 8)
-        {
-            cnt = 0;
-            String byteReceived = al.toString().replaceAll("[\\[\\], ]", "");
-            writeToOutputFile(binaryStringToAsciiChar(byteReceived));
-        }
-        cnt++;
-        if (done == true)
-        {
-            receivingThroughCovert = false;
-            mfw.writeOutputFile();
+            else
+            {
+                receivingThroughCovert = false;
+                mfw.writeOutputFile();
+            }
+            al.clear();
         }
     }
 
@@ -197,11 +196,12 @@ public class SystemSubject
 
         return instructionList;
     }
-    List<Integer> al;
-    boolean done = false;
-    int init = 8;
-    int cnt = 0;
 
+    /**
+     * This is used by Hal, not Lyle
+     * @return
+     * @throws IOException 
+     */
     private int getNextBit() throws IOException //works
     {
         if (!runningCovertChannel)
@@ -210,6 +210,7 @@ public class SystemSubject
             assert covertInputMessageFilename != null;
             bi = new BitInput(covertInputMessageFilename);
             runningCovertChannel = true;
+
         }
         int next = bi.getNextBit();
         return next;

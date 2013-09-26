@@ -15,7 +15,32 @@ Programmer #2:
 	CSID: vuonga
 	Email: ann.vuong@utexas.edu
 
-NEED TO DO VERBOSE
+Test trials:
 
+Homer's Iliad
+- Time taken: 14,871  ms
+- Size:       782,214 bytes
+- Bandwidth:  420.799 bits/ms
 
-Additional Info: The printState method prints in an arbitrary order and in lowercase. Hopefully, that is ok.
+A very small file
+- Time taken: 391     ms
+- Size:       28      bytes
+- Bandwidth:  0.57289 bits/ms
+
+Hawthorne's Scarlet Letter
+- Time taken: 26,254  ms
+- Size:       516,423 bytes
+- Bandwidth:  157.362 bits/ms
+
+Twain's The Adventures of Huckleberry Finn
+- Time taken: 3,123   ms
+- Size:       610,157 bytes
+- Bandwidth:  1,563.0 bits/ms
+
+Average bandwidth is 535.433 bits/ms.
+
+Machine information:
+The machine we ran on is clockwork-grapefruit.cs.utexas.edu.
+Ubuntu 12.04.3 LTS (precise)
+8GB RAM
+Intel(R) Xeon(R) CPU E31270 @ 3.40GHz

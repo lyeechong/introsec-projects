@@ -74,10 +74,19 @@ public class CovertChannel
 
         SystemSubjectsContainer.get("Hal").setCovertInputMessageFileName(inputFileName);
         SystemSubjectsContainer.get("Lyle").setCovertInputMessageFileName(inputFileName);
+
+        long time = 0;
+
+        long start = System.currentTimeMillis();
+
         while (!StaticStuff.isDoneWithCovertChannel())
         {
             StaticStuff.getRf().performInstruction("run Hal");
         }
+
+        long stop = System.currentTimeMillis();
+        time = stop - start;
+        System.out.println(time);
 
         if (StaticStuff.isVerbose())
         {
