@@ -13,7 +13,7 @@ public final class MyFileWriter
 
     private final String outputFileName;
     private StringBuffer sb;
-    private final int SB_LIMIT = 512;
+    private final int SB_LIMIT = 8192;
 
     public MyFileWriter(String outputFileName)
     {
