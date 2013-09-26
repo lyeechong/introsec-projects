@@ -9,6 +9,7 @@
  */
 public abstract class Instruction
 {
+
     private final String instructionString;
     private boolean hasClearance;
 
@@ -22,13 +23,17 @@ public abstract class Instruction
     {
         return hasClearance;
     }
-    
+
     public void exec()
     {
+        if (StaticStuff.isVerbose())
+        {
+            printToLog();
+        }
         print();
-        execute();        
+        execute();
     }
-    
+
     public boolean hasClearance()
     {
         return hasClearance;
@@ -39,12 +44,17 @@ public abstract class Instruction
         return instructionString;
     }
 
+    protected void printToLog()
+    {
+        LogWriterManager.getLog().writeLine(toString());
+    }
+
     protected void print()
     {
         System.out.println(toString());
     }
 
     protected abstract void execute();
-    
+
     public abstract String toString();
 }

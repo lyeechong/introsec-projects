@@ -1,12 +1,4 @@
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 /**
  *
  * @author lchong
@@ -14,7 +6,7 @@ import java.util.Scanner;
 public class CovertChannel
 {
 
-    private boolean verbose = false;
+    private static final String VERBOSE_FLAG = "v";
 
     public CovertChannel()
     {
@@ -36,7 +28,7 @@ public class CovertChannel
         SecurityLevel high = new SecurityLevel("HIGH", 1);
 
         StaticStuff.setRf(new ReferenceMonitor());
-        
+
         StaticStuff.getRf().createSecurityLevel(low);
         StaticStuff.getRf().createSecurityLevel(high);
 
@@ -44,7 +36,6 @@ public class CovertChannel
 
         StaticStuff.getRf().createSubject("Lyle", low);
         StaticStuff.getRf().createSubject("Hal", high);
-        
     }
 
     private void run(String[] args)
@@ -60,11 +51,12 @@ public class CovertChannel
 
         if (numArgs == 2)
         {
-            verbose = args[0].equalsIgnoreCase("v");
+            StaticStuff.setVerbose(args[0].equalsIgnoreCase(VERBOSE_FLAG));
             inputFileName = args[1];
         }
         else if (numArgs == 1)
         {
+            StaticStuff.setVerbose(false);
             inputFileName = args[0];
         }
         else
@@ -73,8 +65,18 @@ public class CovertChannel
             assert false;
         }
 
-        SystemSubjectsContainer.get("Hal").setCovertInputMessage(inputFileName);
-        StaticStuff.getRf().performInstruction("run Hal");
+        if (StaticStuff.isVerbose())
+        {
+            LogWriterManager.setOutputFileName("log");
+        }
 
+        SystemSubjectsContainer.get("Hal").setCovertInputMessageFileName(inputFileName);
+        SystemSubjectsContainer.get("Lyle").setCovertInputMessageFileName(inputFileName);
+        StaticStuff.getRf().performInstruction("run Hal");
+        
+        if (StaticStuff.isVerbose())
+        {
+            LogWriterManager.getLog().writeOutputFile();
+        }
     }
 }

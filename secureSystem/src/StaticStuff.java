@@ -13,9 +13,20 @@ public class StaticStuff
     private static ReferenceMonitor rf;
     private static ClearanceChecker cc;
     private static ObjectManager om;
+    private static boolean verbose;
 
     private StaticStuff()
     {
+    }
+
+    public static boolean isVerbose()
+    {
+        return verbose;
+    }
+
+    public static void setVerbose(boolean verbose)
+    {
+        StaticStuff.verbose = verbose;
     }
 
     public static ObjectManager getOm()

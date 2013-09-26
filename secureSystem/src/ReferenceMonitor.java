@@ -43,9 +43,6 @@ public class ReferenceMonitor
      */
     public Instruction performInstruction(String instruction)
     {
-        //printState(instruction);
-
-
         instruction = instruction.trim(); // -- I don't think the user will mind.
 
         Instruction instructionObject = null;
@@ -54,7 +51,6 @@ public class ReferenceMonitor
 
         if (!validInstruction) //syntax checking only
         {
-            System.out.println("\t !!! Bad instruction !!! :: " + instruction);
             // -- the instruction was illegal, so generate a BadInstruction
             BadInstruction bi = new BadInstruction("Bad Instruction", false);
             bi.exec();

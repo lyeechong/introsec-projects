@@ -9,11 +9,23 @@
  */
 public class LogWriterManager
 {
-    public static LogWriter log = new LogWriter();
 
-    public static LogWriter getLog()
+    private static MyFileWriter log;
+    private static String outputFileName;
+
+    public static void setOutputFileName(String name)
     {
+        outputFileName = name;
+    }
+
+    public static MyFileWriter getLog()
+    {
+        if (log == null)
+        {
+            assert outputFileName != null;
+            log = new MyFileWriter(outputFileName);
+        }
+
         return log;
     }
-    
 }

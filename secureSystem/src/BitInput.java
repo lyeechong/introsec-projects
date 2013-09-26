@@ -12,7 +12,7 @@ import java.nio.file.Files;
  *
  * @author lchong
  */
-public class ByteInput
+public class BitInput
 {
 
     private ByteArrayInputStream read;
@@ -20,11 +20,13 @@ public class ByteInput
     private int valToSend;
     private final String filename;
 
-    public ByteInput(String filename) throws IOException
+    public BitInput(String filename) throws IOException
     {
         numBitsLeft = 8;
         valToSend = 0;
         this.filename = filename;
+        
+        assert new File(filename).exists();
 
         if (read == null)
         {

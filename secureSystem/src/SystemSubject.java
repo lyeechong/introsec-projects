@@ -19,20 +19,30 @@ public class SystemSubject
      * The value the subject last read. Initialized to zero.
      */
     private int temp;
-    private int bit;
-    private int counter;
-    private boolean receivingThroughCovert = true; //low level specifically
-    private boolean runningCovertChannel = false; //high level specifically
-    private int initialCounter = 8;
-    private ByteInput bi;
+    /**
+     * low level specifically. used to denote if Lyle is receiving bytes through the covert channel
+     */
+    private boolean receivingThroughCovert = true;
+    /**
+     * high level specifically. used to denote if Hal is sending stuff
+     */
+    private boolean runningCovertChannel = false;
+    /**
+     * used by Hal to get the bits from the input file
+     */
+    private BitInput bi;
+    /**
+     * the name of the INPUT file to read from
+     */
     private String covertInputMessageFilename;
+    private MyFileWriter mfw;
 
     public String getName()
     {
         return name;
     }
 
-    public void setCovertInputMessage(String covertInputMessageFilename)
+    public void setCovertInputMessageFileName(String covertInputMessageFilename)
     {
         this.covertInputMessageFilename = covertInputMessageFilename;
     }
@@ -43,47 +53,6 @@ public class SystemSubject
      */
     public void setBit(int newBit) //assume this stuff works
     {
-        /*
-        initialCounter--;
-        if (newBit == 1)
-        {
-        bit = bit << 1;
-        bit |= newBit;
-        bit &= 255;
-        receivingThroughCovert = true;
-        }
-        else if (newBit == 0)
-        {
-        bit = bit << 1;
-        bit &= newBit;
-        bit &= 255;
-        }
-        else
-        {
-        assert false;
-        }
-        
-        if ((bit & 255) == 0 && receivingThroughCovert && initialCounter <= 0)
-        {
-        receivingThroughCovert = false;
-        }
-        
-        System.out.println("bit received is :: " + newBit);
-        
-        if (receivingThroughCovert)
-        {
-        counter++;
-        if (counter == 8)
-        {
-        for (int i = 0; i < 100; i++)
-        {
-        System.out.println("Byte received! :: " + bit);
-        }
-        bit = 0;
-        counter = 0;
-        }
-        }
-         * */
         int next = newBit;
         if (al.size() != 8)
         {
@@ -95,7 +64,6 @@ public class SystemSubject
         al.add(next);
         init--;
 
-        System.out.println("hello " + next);
         al.remove(0);
         done = true && init < 0;
         for (int i : al)
@@ -108,13 +76,47 @@ public class SystemSubject
         if (cnt >= 8)
         {
             cnt = 0;
-            System.out.println("-------------------------the al was :: " + al.toString().replaceAll("[\\[\\], ]", ""));
+            String byteReceived = al.toString().replaceAll("[\\[\\], ]", "");
+            writeToOutputFile(binaryStringToAsciiChar(byteReceived));
         }
         cnt++;
         if (done == true)
         {
             receivingThroughCovert = false;
+            mfw.writeOutputFile();
         }
+    }
+
+    private char binaryStringToAsciiChar(String binaryString)
+    {
+        char res = (char) Integer.parseInt(binaryString, 2);
+        return res;
+    }
+
+    /**
+     * This is for Lyle to write to the output file the byte he got from Hal through the covert channel
+     * @param byteReceived 
+     */
+    private void writeToOutputFile(String byteReceived)
+    {
+        if (mfw == null)
+        {
+            mfw = new MyFileWriter(covertInputMessageFilename + ".out");
+        }
+        mfw.writeString(byteReceived);
+    }
+
+    /**
+     * This is for Lyle to write to the output file the byte he got from Hal through the covert channel
+     * @param byteReceived 
+     */
+    private void writeToOutputFile(char byteReceived)
+    {
+        if (mfw == null)
+        {
+            mfw = new MyFileWriter(covertInputMessageFilename + ".out");
+        }
+        mfw.writeString(byteReceived);
     }
 
     public int getTemp()
@@ -202,7 +204,7 @@ public class SystemSubject
         {
             //set up the covert channel
             assert covertInputMessageFilename != null;
-            bi = new ByteInput(covertInputMessageFilename);
+            bi = new BitInput(covertInputMessageFilename);
             runningCovertChannel = true;
         }
         int next = bi.getNextBit();
