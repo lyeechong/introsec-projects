@@ -14,9 +14,20 @@ public class StaticStuff
     private static ClearanceChecker cc;
     private static ObjectManager om;
     private static boolean verbose;
+    private static boolean doneWithCovertChannel;
 
     private StaticStuff()
     {
+    }
+
+    public static boolean isDoneWithCovertChannel()
+    {
+        return doneWithCovertChannel;
+    }
+
+    public static void setDoneWithCovertChannel(boolean done)
+    {
+        StaticStuff.doneWithCovertChannel = done;
     }
 
     public static boolean isVerbose()

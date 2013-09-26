@@ -30,7 +30,7 @@ public abstract class Instruction
         {
             printToLog();
         }
-        print();
+        //print();
         execute();
     }
 

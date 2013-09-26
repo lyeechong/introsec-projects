@@ -36,6 +36,8 @@ public class CovertChannel
 
         StaticStuff.getRf().createSubject("Lyle", low);
         StaticStuff.getRf().createSubject("Hal", high);
+
+        StaticStuff.setDoneWithCovertChannel(false);
     }
 
     private void run(String[] args)
@@ -72,8 +74,11 @@ public class CovertChannel
 
         SystemSubjectsContainer.get("Hal").setCovertInputMessageFileName(inputFileName);
         SystemSubjectsContainer.get("Lyle").setCovertInputMessageFileName(inputFileName);
-        StaticStuff.getRf().performInstruction("run Hal");
-        
+        while (!StaticStuff.isDoneWithCovertChannel())
+        {
+            StaticStuff.getRf().performInstruction("run Hal");
+        }
+
         if (StaticStuff.isVerbose())
         {
             LogWriterManager.getLog().writeOutputFile();

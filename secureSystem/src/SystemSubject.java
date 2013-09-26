@@ -187,7 +187,11 @@ public class SystemSubject
             instructionList.add(new RunInstruction("destroy Lyle obj", true));
             if (receivingThroughCovert)
             {
-                instructionList.add(new RunInstruction("run Hal", true));
+                //instructionList.add(new RunInstruction("run Hal", true));
+            }
+            else
+            {
+                StaticStuff.setDoneWithCovertChannel(true);
             }
         }
 
