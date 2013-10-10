@@ -81,6 +81,9 @@ public class Encoder
         
         MyEncoder me = new MyEncoder(symbolCodes);
         me.encodeFile(fileName);
+        
+        MyDecoder md = new MyDecoder(symbolCodes);
+        md.decodeFile(fileName);
 
 //        CanonicalCode canonCode = new CanonicalCode(code, 257);
 //        code = canonCode.toCodeTree();
