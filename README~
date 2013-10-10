@@ -1,0 +1,46 @@
+cs361security
+=============
+
+CS 361 Intro to Computer Security assignment 2
+
+Programmer #1:
+	Name: Lyee Chong
+	UTEID: lsc568
+	CSID: lchong
+	Email: lyeechong@gmail.com
+
+Programmer #2: 
+	Name: Ann Vuong
+	UTEID: atv286
+	CSID: vuonga
+	Email: ann.vuong@utexas.edu
+
+Test trials:
+
+Hawthorne's Scarlet Letter
+- Time taken: 404,707 ms
+- Size:       516,423 bytes
+- Bandwidth:  10.2083 bits/ms
+
+Twain's The Adventures of Huckleberry Finn
+- Time taken: 343,439 ms
+- Size:       610,157 bytes
+- Bandwidth:  14.2128 bits/ms
+
+Kafka's Metamorphosis
+- Time taken: 111,048 ms
+- Size:       134,072 bytes
+- Bandwidth:  9.65867 bits/ms
+
+Average bandwidth is 11.3599 bits/ms.
+
+Machine information:
+The machine we ran on is clockwork-grapefruit.cs.utexas.edu.
+Ubuntu 12.04.3 LTS (precise)
+8GB RAM
+Intel(R) Xeon(R) CPU E31270 @ 3.40GHz
+
+
+CREDIT GOES TO
+https://github.com/nayuki/Huffman-Coding
+for super awesome huffman code! 
