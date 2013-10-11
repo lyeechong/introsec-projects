@@ -23,14 +23,25 @@ public class MyDecoder
         this.symbolCodes = symbolCodes;
     }
 
-    public void decodeFile(String fileName) throws IOException
+    public void decodeFile(String fileName, boolean pairs) throws IOException
     {
-        String outputFileName = fileName + ".dec1";
+        String outputFileName;
+        
 
         StringBuffer output = new StringBuffer();
 
+        Scanner file = null;
+        if (pairs)
+        {
+            file = new Scanner(new File(fileName + ".enc2"));
+            outputFileName = fileName + ".dec2";
+        }
+        else
+        {
+            file = new Scanner(new File(fileName + ".enc1"));
+            outputFileName = fileName + ".dec1";
+        }
 
-        Scanner file = new Scanner(new File(fileName + ".enc1"));
         String currEnc = "";
         while (file.hasNextLine())
         {
@@ -39,10 +50,10 @@ public class MyDecoder
             {
                 currEnc += c;
 
-                char res = reverseLookUp(currEnc);
-                if (res != 97)
+                String res = reverseLookUp(currEnc);
+                if (res != null)
                 {
-                    System.out.println("res" + res);
+//                    System.out.println("res" + res);
                     String encodedChar = res + "";
                     output.append(encodedChar);
                     currEnc = "";
@@ -54,17 +65,17 @@ public class MyDecoder
         writer.close();
     }
 
-    private char reverseLookUp(String str)
+    private String reverseLookUp(String str)
     {
         for (int c : symbolCodes.keySet())
         {
             String mapVal = symbolCodes.get(c);
-            System.out.println("MapVal :: " + mapVal + " ---- str :: " + str);
+//            System.out.println("MapVal :: " + mapVal + " ---- str :: " + str);
             if (mapVal.equals(str))
             {
-                return (char) (c + 65);
+                return SymbolLookup.symbols.get(c);
             }
         }
-        return (char) 97;
+        return null;
     }
 }

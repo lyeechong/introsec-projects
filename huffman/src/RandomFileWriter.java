@@ -17,22 +17,22 @@ import java.util.Map;
 public class RandomFileWriter
 {
 
-    Map<Character, Integer> map;
-    Character[] probArray;
+    Map<Integer, Integer> map;
+    int[] probArray;
     int total;
 
-    public RandomFileWriter(Map<Character, Integer> map, int total)
+    public RandomFileWriter(Map<Integer, Integer> map, int total)
     {
         this.map = map;
         this.total = total;
-        probArray = new Character[total];
+        probArray = new int[total];
         generateProbArray();
     }
 
     private void generateProbArray()
     {
         int pos = 0;
-        for (char c : map.keySet())
+        for (int c : map.keySet())
         {
             int val = map.get(c);
             for (int i = pos; i < val + pos; i++)
@@ -43,7 +43,7 @@ public class RandomFileWriter
         }
     }
 
-    private char getRandChar()
+    private int getRandChar()
     {
         int pos = (int) (Math.random() * total);
 //        System.out.println("probarray" + Arrays.toString(probArray));
@@ -55,8 +55,9 @@ public class RandomFileWriter
         StringBuffer b = new StringBuffer();
         for (int i = 0; i < fileLength; i++)
         {
-            char c = getRandChar();
-            b.append(c);
+            int c = getRandChar();            
+            String val = SymbolLookup.symbols.get(c);
+            b.append(val);
         }
         return b.toString();
     }

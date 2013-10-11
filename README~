@@ -1,7 +1,7 @@
 cs361security
 =============
 
-CS 361 Intro to Computer Security assignment 2
+CS 361 Intro to Computer Security assignment 3
 
 Programmer #1:
 	Name: Lyee Chong
@@ -15,32 +15,41 @@ Programmer #2:
 	CSID: vuonga
 	Email: ann.vuong@utexas.edu
 
-Test trials:
+Test example:
 
-Hawthorne's Scarlet Letter
-- Time taken: 404,707 ms
-- Size:       516,423 bytes
-- Bandwidth:  10.2083 bits/ms
+Using single symbols in encoding:
+A=100
+B=101
+C=11
+D=0
+Results for using one character encoding:
+Entropy      :: 1.789929075309999
+Efficiency   :: 1.8181818181818181
+Percent diff :: 98.44609914204995%
 
-Twain's The Adventures of Huckleberry Finn
-- Time taken: 343,439 ms
-- Size:       610,157 bytes
-- Bandwidth:  14.2128 bits/ms
-
-Kafka's Metamorphosis
-- Time taken: 111,048 ms
-- Size:       134,072 bytes
-- Bandwidth:  9.65867 bits/ms
-
-Average bandwidth is 11.3599 bits/ms.
-
-Machine information:
-The machine we ran on is clockwork-grapefruit.cs.utexas.edu.
-Ubuntu 12.04.3 LTS (precise)
-8GB RAM
-Intel(R) Xeon(R) CPU E31270 @ 3.40GHz
-
+Using pairs for the encoding:
+AA=0111110
+AB=0111111
+AC=01000
+AD=11010
+BA=011110
+BB=01110
+BC=0101
+BD=1110
+CA=01001
+CB=0110
+CC=1100
+CD=100
+DA=11011
+DB=1111
+DC=101
+DD=00
+Results for using two character encoding:
+Entropy      :: 3.5798581506199985
+Efficiency   :: 3.611570247933884
+Percent diff :: 99.12193048627456%
 
 CREDIT GOES TO
 https://github.com/nayuki/Huffman-Coding
-for super awesome huffman code! 
+For the Huffman encoding code.
+(We used his code as-is, apart from adding a get method in FrequencyTable.)

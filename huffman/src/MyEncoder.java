@@ -24,9 +24,17 @@ public class MyEncoder
         this.symbolCodes = symbolCodes;
     }
 
-    public void encodeFile(String fileName) throws FileNotFoundException, UnsupportedEncodingException
+    public void encodeFile(String fileName, boolean pairs) throws FileNotFoundException, UnsupportedEncodingException
     {
-        String outputFileName = fileName + ".enc1";
+        String outputFileName;
+        if (pairs)
+        {
+            outputFileName = fileName + ".enc2";
+        }
+        else
+        {
+            outputFileName = fileName + ".enc1";
+        }
         StringBuffer output = new StringBuffer();
 
 
@@ -35,14 +43,38 @@ public class MyEncoder
         while (file.hasNextLine())
         {
             String line = file.nextLine();
+            String curr = "";
             for (char c : line.toCharArray())
             {
-                String encodedChar = symbolCodes.get((int) c - 65);
-                output.append(encodedChar);
+                curr += c;
+                int i = reverseLookup(curr);
+                if (i != -1)
+                {
+                    curr = "";
+                    String encodedChar = symbolCodes.get(i);
+                    output.append(encodedChar);
+                }
             }
         }
         PrintWriter writer = new PrintWriter(outputFileName, "US-ASCII");
         writer.print(output.toString());
         writer.close();
+    }
+
+    private int reverseLookup(String str)
+    {
+        if (str.length() > 2)
+        {
+            System.out.println("bad stuff");
+        }
+        for (int i : SymbolLookup.symbols.keySet())
+        {
+            String val = SymbolLookup.symbols.get(i);
+            if (val.equals(str))
+            {
+                return i;
+            }
+        }
+        return -1;
     }
 }
