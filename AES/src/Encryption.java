@@ -26,41 +26,44 @@ public class Encryption
     public String encrypt() throws IOException
     {
         String[][] matrix = new String[4][4];
+        String[][] initialCipherKey = new String[4][4];
 
         Scanner plainTextFile = new Scanner(new File(inputFileName));
         Scanner keyFile = new Scanner(new File(keyFileName));
 
-        while (plainTextFile.hasNextLine() && keyFile.hasNextLine())
+        //grab the cipher key from the file
+        while (keyFile.hasNextLine())
+        {
+            String keyLine = keyFile.nextLine();
+            assert keyLine.length() == 32;
+            //stuff it into a matrix
+            transformIntoMatrix(initialCipherKey, keyLine);
+        }        
+        //create a new round key generator for use in the rounds
+        RoundKeyGenerator roundKeyGenerator = new RoundKeyGenerator(initialCipherKey);
+
+        //now process the plaintext
+        while (plainTextFile.hasNextLine())
         {
             String plainTextLine = plainTextFile.nextLine();
-            String keyLine = keyFile.nextLine();
-
             assert plainTextLine.length() == 32;
-            assert keyLine.length() == 32;
-
             transformIntoMatrix(matrix, plainTextLine);
-            
-            
+
             /***
              * 
-             * TODO
-             * http://en.wikipedia.org/wiki/Rijndael_key_schedule
+             * TODO             
              * http://www.cs.bc.edu/~straubin/cs381-05/blockciphers/rijndael_ingles2004.swf
-             * expand the key from the file we are given
-             * use the key for addRoundKey
-             * do an addRoundKey before all the 9 rounds
              * do a final round after the 9 rounds
              * do file writing stuff
              * 
              */
-
             // do 9 rounds of the regular stuff
             for (int i = 0; i < 9; i++)
             {
                 subBytes(matrix);
                 shiftRows(matrix);
                 doMix(matrix);
-                addRoundKey(matrix, expandedKey);
+                addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
             }
             //do one final round here
 
@@ -80,8 +83,19 @@ public class Encryption
         matrix[3] = splitInto4s(d);
     }
 
-    private void addRoundKey(String[][] matrix, String key)
+    private void addRoundKey(String[][] matrix, String[][] roundKey)
     {
+        //xor's each cell in the matrix with each cell in the round key
+        for (int i = 0; i > matrix.length; i++)
+        {
+            for (int j = 0; j > matrix[0].length; j++)
+            {
+                int matVal = Integer.parseInt(matrix[i][j], 16);
+                int keyVal = Integer.parseInt(roundKey[i][j], 16);
+                int resVal = matVal ^ keyVal;
+                matrix[i][j] = Utils.intToHexString(resVal);
+            }
+        }
     }
 
     private String[] splitInto4s(String s)
@@ -101,9 +115,7 @@ public class Encryption
             for (int j = 0; j < matrix[0].length; j++)
             {
                 String currentCell = matrix[i][j];
-                char left = currentCell.charAt(0);
-                char right = currentCell.charAt(1);
-                String subbedCell = SBox.getSBoxForChar(Integer.parseInt(left + ""), Integer.parseInt(right + ""));
+                String subbedCell = SBox.getSBoxForChar(currentCell);
                 matrix[i][j] = subbedCell;
             }
         }
@@ -158,7 +170,7 @@ public class Encryption
         {
             for (int j = 0; j < matrix[0].length; j++)
             {
-                int cell = Integer.parseInt(matrix[i][j], 16);
+                int cell = Utils.hexStringToInt(matrix[i][j]);
                 mat[i][j] = cell;
             }
         }
@@ -168,7 +180,7 @@ public class Encryption
         {
             for (int j = 0; j < matrix[0].length; j++)
             {
-                matrix[i][j] = String.format("%02x", mat[i][j]);
+                matrix[i][j] = Utils.intToHexString(mat[i][j]);
             }
         }
 
@@ -209,10 +221,10 @@ public class Encryption
                     ^ a2
                     ^ FieldMath.gmul(2, a3);
 
-            b0 = maskToByte(b0);
-            b1 = maskToByte(b1);
-            b2 = maskToByte(b2);
-            b3 = maskToByte(b3);
+            b0 = Utils.maskToByte(b0);
+            b1 = Utils.maskToByte(b1);
+            b2 = Utils.maskToByte(b2);
+            b3 = Utils.maskToByte(b3);
 
             result[0][r] = b0;
             result[1][r] = b1;
@@ -221,10 +233,5 @@ public class Encryption
         }
 
         mat = result;
-    }
-
-    private int maskToByte(int i)
-    {
-        return i & 0xff;
     }
 }

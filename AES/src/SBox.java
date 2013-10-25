@@ -9,6 +9,7 @@
  */
 public class SBox
 {
+
     private static String sbox[][] =
     {
         {
@@ -60,6 +61,13 @@ public class SBox
             "8C", "A1", "89", "0D", "BF", "E6", "42", "68", "41", "99", "2D", "0F", "B0", "54", "BB", "16"
         }
     };
+
+    public static String getSBoxForChar(String val)
+    {
+        char left = val.charAt(0);
+        char right = val.charAt(1);
+        return getSBoxForChar(Integer.parseInt(left + ""), Integer.parseInt(right + ""));
+    }
 
     public static String getSBoxForChar(int r, int c)
     {

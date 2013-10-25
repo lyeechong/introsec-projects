@@ -62,6 +62,13 @@ public class InvSBox
         }
     };
 
+    public static String getInvSBoxForChar(String val)
+    {
+        char left = val.charAt(0);
+        char right = val.charAt(1);
+        return getInvSBoxForChar(Integer.parseInt(left + ""), Integer.parseInt(right + ""));
+    }
+
     public static String getInvSBoxForChar(int r, int c)
     {
         return invSbox[r][c];
