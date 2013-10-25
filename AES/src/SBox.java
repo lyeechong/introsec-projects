@@ -66,7 +66,7 @@ public class SBox
     {
         char left = val.charAt(0);
         char right = val.charAt(1);
-        return getSBoxForChar(Integer.parseInt(left + ""), Integer.parseInt(right + ""));
+        return getSBoxForChar(Utils.hexStringToInt(left + ""), Utils.hexStringToInt(right + ""));
     }
 
     public static String getSBoxForChar(int r, int c)

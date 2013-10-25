@@ -23,10 +23,11 @@ public class Encryption
         this.inputFileName = inputFileName;
     }
 
-    public String encrypt() throws IOException
+    public void encrypt() throws IOException
     {
         String[][] matrix = new String[4][4];
         String[][] initialCipherKey = new String[4][4];
+        MyFileWriter myFileWriter = new MyFileWriter(inputFileName + ".enc");
 
         Scanner plainTextFile = new Scanner(new File(inputFileName));
         Scanner keyFile = new Scanner(new File(keyFileName));
@@ -35,19 +36,27 @@ public class Encryption
         while (keyFile.hasNextLine())
         {
             String keyLine = keyFile.nextLine();
+            Utils.log("the keyLine is :: " + keyLine);
             assert keyLine.length() == 32;
             //stuff it into a matrix
             transformIntoMatrix(initialCipherKey, keyLine);
-        }        
+            Utils.log("the keyLine as a matrix is :: ");
+            Utils.logMatrix(initialCipherKey);
+        }
         //create a new round key generator for use in the rounds
         RoundKeyGenerator roundKeyGenerator = new RoundKeyGenerator(initialCipherKey);
+
+        Utils.log("Starting to process the plaintext file");
 
         //now process the plaintext
         while (plainTextFile.hasNextLine())
         {
             String plainTextLine = plainTextFile.nextLine();
+            Utils.log("The plainTextLine is " + plainTextLine);
             assert plainTextLine.length() == 32;
             transformIntoMatrix(matrix, plainTextLine);
+            Utils.log("the plainTextLine as a matrix is :: ");
+            Utils.logMatrix(matrix);
 
             /***
              * 
@@ -55,19 +64,58 @@ public class Encryption
              * http://www.cs.bc.edu/~straubin/cs381-05/blockciphers/rijndael_ingles2004.swf
              * do a final round after the 9 rounds
              * do file writing stuff
-             * 
              */
             // do 9 rounds of the regular stuff
+            Utils.log("Beginning the 9 rounds");
             for (int i = 0; i < 9; i++)
             {
+                Utils.log("Doing subBytes");
                 subBytes(matrix);
+                Utils.log("Matrix after subBytes:");
+                Utils.logMatrix(matrix);
+                
+                Utils.log("Doing shiftRows");
                 shiftRows(matrix);
+                Utils.log("Matrix after shiftRows:");
+                Utils.logMatrix(matrix);
+                
+                Utils.log("Doing mixing cols");
                 doMix(matrix);
+                Utils.log("Matrix after mixing cols:");
+                Utils.logMatrix(matrix);                
+                
+                Utils.log("Doing adding round key");
                 addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
+                Utils.log("Matrix after adding round key:");
+                Utils.logMatrix(matrix);                
             }
-            //do one final round here
 
+            Utils.log("Beginning the final round");
+            //do one final round here (no mixing columns)
+                Utils.log("Doing subBytes (final round)");
+                subBytes(matrix);
+                Utils.log("Matrix after subBytes (final round):");
+                Utils.logMatrix(matrix);
+                
+                Utils.log("Doing shiftRows (final round)");
+                shiftRows(matrix);
+                Utils.log("Matrix after shiftRows (final round):");
+                Utils.logMatrix(matrix);
+                
+                Utils.log("Not doing mixing cols since this is the final round");
+                
+                Utils.log("Doing adding round key (final round)");
+                addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
+                Utils.log("Matrix after adding round key (final round):");
+                Utils.logMatrix(matrix);    
 
+            String encryptedString = Utils.matrixToString(matrix);
+            Utils.log("Done with encryption of this line!");
+            Utils.log("Encrypted line: " + encryptedString);
+
+            Utils.log("Writing to output file");
+            myFileWriter.writeLine(encryptedString);
+            myFileWriter.writeOutputFile();
         }
     }
 

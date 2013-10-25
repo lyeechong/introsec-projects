@@ -10,6 +10,8 @@
 public class Utils
 {
 
+    public static boolean LOGGING = true;
+
     /**
      * Copies a matrix
      * @param mat
@@ -30,6 +32,14 @@ public class Utils
         return newMat;
     }
 
+    public static void log(String logString)
+    {
+        if (LOGGING)
+        {
+            System.out.println("LOG :: " + logString);
+        }
+    }
+
     /**
      * Converts an integer to a hex string
      */
@@ -37,7 +47,7 @@ public class Utils
     {
         return String.format("%02x", hex);
     }
-    
+
     /**
      * Masks an int into a byte
      * @param i
@@ -47,9 +57,38 @@ public class Utils
     {
         return i & 0xff;
     }
-    
+
     public static int hexStringToInt(String hexString)
     {
         return Integer.parseInt(hexString, 16);
+    }
+
+    public static String matrixToString(String[][] matrix)
+    {
+        String out = "";
+        for (int i = 0; i < matrix.length; i++)
+        {
+            for (int j = 0; j < matrix[0].length; j++)
+            {
+                out += matrix[i][j];
+            }
+        }
+        return out;
+    }
+
+    public static void logMatrix(String[][] matrix)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            System.out.print("\t");
+            for (int j = 0; j < 4; j++)
+            {
+                if(LOGGING)
+                {
+                    System.out.printf("%2s ", matrix[i][j]);
+                }
+            }
+            System.out.println("");
+        }
     }
 }
