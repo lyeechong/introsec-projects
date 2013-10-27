@@ -58,6 +58,12 @@ public class Encryption
             Utils.log("the plainTextLine as a matrix is :: ");
             Utils.logMatrix(matrix);
 
+
+            Utils.log("Doing initial add round key thing");
+            addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
+            Utils.log("Matrix after adding initial round key:");
+            Utils.logMatrix(matrix);
+
             /***
              * 
              * TODO             
@@ -69,45 +75,45 @@ public class Encryption
             Utils.log("Beginning the 9 rounds");
             for (int i = 0; i < 9; i++)
             {
-                Utils.log("Doing subBytes");
+                Utils.log("Doing subBytes (round #" + (i + 1) + ")");
                 subBytes(matrix);
-                Utils.log("Matrix after subBytes:");
+                Utils.log("Matrix after subBytes: (round #" + (i + 1) + ")");
                 Utils.logMatrix(matrix);
-                
-                Utils.log("Doing shiftRows");
+
+                Utils.log("Doing shiftRows (round #" + (i + 1) + ")");
                 shiftRows(matrix);
-                Utils.log("Matrix after shiftRows:");
+                Utils.log("Matrix after shiftRows: (round #" + (i + 1) + ")");
                 Utils.logMatrix(matrix);
-                
-                Utils.log("Doing mixing cols");
+
+                Utils.log("Doing mixing cols (round #" + (i + 1) + ")");
                 doMix(matrix);
-                Utils.log("Matrix after mixing cols:");
-                Utils.logMatrix(matrix);                
-                
-                Utils.log("Doing adding round key");
+                Utils.log("Matrix after mixing cols: (round #" + (i + 1) + ")");
+                Utils.logMatrix(matrix);
+
+                Utils.log("Doing adding round key (round #" + (i + 1) + ")");
                 addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
-                Utils.log("Matrix after adding round key:");
-                Utils.logMatrix(matrix);                
+                Utils.log("Matrix after adding round key: (round #" + (i + 1) + ")");
+                Utils.logMatrix(matrix);
             }
 
             Utils.log("Beginning the final round");
             //do one final round here (no mixing columns)
-                Utils.log("Doing subBytes (final round)");
-                subBytes(matrix);
-                Utils.log("Matrix after subBytes (final round):");
-                Utils.logMatrix(matrix);
-                
-                Utils.log("Doing shiftRows (final round)");
-                shiftRows(matrix);
-                Utils.log("Matrix after shiftRows (final round):");
-                Utils.logMatrix(matrix);
-                
-                Utils.log("Not doing mixing cols since this is the final round");
-                
-                Utils.log("Doing adding round key (final round)");
-                addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
-                Utils.log("Matrix after adding round key (final round):");
-                Utils.logMatrix(matrix);    
+            Utils.log("Doing subBytes (final round)");
+            subBytes(matrix);
+            Utils.log("Matrix after subBytes (final round):");
+            Utils.logMatrix(matrix);
+
+            Utils.log("Doing shiftRows (final round)");
+            shiftRows(matrix);
+            Utils.log("Matrix after shiftRows (final round):");
+            Utils.logMatrix(matrix);
+
+            Utils.log("Not doing mixing cols since this is the final round");
+
+            Utils.log("Doing adding round key (final round)");
+            addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
+            Utils.log("Matrix after adding round key (final round):");
+            Utils.logMatrix(matrix);
 
             String encryptedString = Utils.matrixToString(matrix);
             Utils.log("Done with encryption of this line!");
@@ -133,13 +139,19 @@ public class Encryption
 
     private void addRoundKey(String[][] matrix, String[][] roundKey)
     {
+        Utils.log("The round key matrix :: ");
+        Utils.logMatrix(roundKey);
+
+        Utils.log("The matrix :: ");
+        Utils.logMatrix(matrix);
+
         //xor's each cell in the matrix with each cell in the round key
-        for (int i = 0; i > matrix.length; i++)
+        for (int i = 0; i < matrix.length; i++)
         {
-            for (int j = 0; j > matrix[0].length; j++)
+            for (int j = 0; j < matrix[0].length; j++)
             {
-                int matVal = Integer.parseInt(matrix[i][j], 16);
-                int keyVal = Integer.parseInt(roundKey[i][j], 16);
+                int matVal = Utils.hexStringToInt(matrix[i][j]);
+                int keyVal = Utils.hexStringToInt(roundKey[i][j]);
                 int resVal = matVal ^ keyVal;
                 matrix[i][j] = Utils.intToHexString(resVal);
             }
@@ -222,7 +234,7 @@ public class Encryption
                 mat[i][j] = cell;
             }
         }
-        doMixHelper(mat);
+        mat = doMixHelper(mat);
 
         for (int i = 0; i < matrix.length; i++)
         {
@@ -234,7 +246,7 @@ public class Encryption
 
     }
 
-    private void doMixHelper(int[][] mat)
+    private int[][] doMixHelper(int[][] mat)
     {
         int[][] result = new int[4][4];
 
@@ -281,5 +293,6 @@ public class Encryption
         }
 
         mat = result;
+        return mat;
     }
 }

@@ -1,8 +1,10 @@
+
+import java.util.Arrays;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author lchong
@@ -12,16 +14,37 @@ public class RoundKeyGenerator
 
     String[][] initialCipherKey;
     String[][] currentCipherKey;
+    final int[] RCONS =
+    {
+        0x01,
+        0x02,
+        0x04,
+        0x08,
+        0x10,
+        0x20,
+        0x40,
+        0x80,
+        0x1b,
+        0x36
+    };
+    int roundNumber;
 
     public RoundKeyGenerator(String[][] initialCipherKey)
     {
         this.initialCipherKey = Utils.copyMatrix(initialCipherKey);
         this.currentCipherKey = Utils.copyMatrix(initialCipherKey);
+        roundNumber = -1;
     }
 
     public String[][] getNextCipherKey()
     {
+        if(roundNumber == -1)
+        {
+            roundNumber++;
+            return Utils.copyMatrix(initialCipherKey);            
+        }
         generateNextCipherKeyAndUpdate();
+        roundNumber++;
         return Utils.copyMatrix(currentCipherKey);
     }
 
@@ -54,33 +77,51 @@ public class RoundKeyGenerator
                 vals[2] = newCipherKey[2][i - 1];
                 vals[3] = newCipherKey[3][i - 1];
             }
+
             assert vals != null;
             assert vals[0] != null;
             assert vals[1] != null;
             assert vals[2] != null;
             assert vals[3] != null;
 
-            //do the substitution
             String[] subbedVals = new String[4];
-            for (int k = 0; k < 4; k++)
+            if (i == 0)
             {
-                subbedVals[k] = SBox.getSBoxForChar(vals[k]);
-            }
 
-            //do the "rotation" on the subbed vals
-            String temp = subbedVals[0];
-            subbedVals[0] = subbedVals[1];
-            subbedVals[1] = subbedVals[2];
-            subbedVals[2] = subbedVals[3];
-            subbedVals[3] = temp;
+                //do the substitution
+
+                for (int k = 0; k < 4; k++)
+                {
+                    subbedVals[k] = SBox.getSBoxForChar(vals[k]);
+                }
+
+                //do the "rotation" on the subbed vals
+                String temp = subbedVals[0];
+                subbedVals[0] = subbedVals[1];
+                subbedVals[1] = subbedVals[2];
+                subbedVals[2] = subbedVals[3];
+                subbedVals[3] = temp;
+            }
+            else
+            {
+                System.arraycopy(vals, 0, subbedVals, 0, 4);
+            }
 
             //perform the xor
             String[] xoredVals = new String[4];
             for (int k = 0; k < 4; k++)
             {
                 int subVal = Utils.hexStringToInt(subbedVals[k]);
-                int cipherVal = Utils.hexStringToInt(currentCipherKey[0][i]);
-                xoredVals[k] = Utils.intToHexString(subVal ^ cipherVal);
+                int cipherVal = Utils.hexStringToInt(currentCipherKey[k][i]);
+
+                if (k == 0 && i == 0)
+                {
+                    xoredVals[k] = Utils.intToHexString(subVal ^ cipherVal ^ RCONS[roundNumber]);
+                }
+                else
+                {
+                    xoredVals[k] = Utils.intToHexString(subVal ^ cipherVal);
+                }
             }
 
             //put the xored vals into the matrix
