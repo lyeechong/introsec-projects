@@ -83,12 +83,15 @@ public class Utils
             System.out.print("\t");
             for (int j = 0; j < 4; j++)
             {
-                if(LOGGING)
+                if (LOGGING)
                 {
                     System.out.printf("%2s ", matrix[i][j]);
                 }
             }
-            System.out.println("");
+            if (LOGGING)
+            {
+                System.out.println("");
+            }
         }
     }
 }

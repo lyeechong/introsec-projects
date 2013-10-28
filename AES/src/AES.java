@@ -11,6 +11,7 @@ import java.io.IOException;
  */
 public class AES
 {
+
     public static void main(String[] args)
     {
         AES aes = new AES();
@@ -40,6 +41,8 @@ public class AES
         Utils.log("KeyFileName arg   :: " + keyFileName);
         Utils.log("InputFileName arg :: " + inputFileName);
 
+        long start = System.currentTimeMillis();
+
         if (option.equalsIgnoreCase("e"))
         {
             Utils.log("Performing encryption");
@@ -57,9 +60,15 @@ public class AES
         else if (option.equalsIgnoreCase("d"))
         {
             Utils.log("Performing decryption");
-            assert false;
-            //do decryption
-            //TODO
+            Decryption d = new Decryption(keyFileName, inputFileName);
+            try
+            {
+                d.decrypt();
+            }
+            catch (IOException ex)
+            {
+                Utils.log("It exploded: " + ex.getMessage());
+            }
         }
         else
         {
@@ -67,7 +76,9 @@ public class AES
             Utils.log("The program exploded!");
             assert false;
         }
-        
+
+
+
         Utils.log("Program ended");
     }
 }

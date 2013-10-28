@@ -66,7 +66,7 @@ public class InvSBox
     {
         char left = val.charAt(0);
         char right = val.charAt(1);
-        return getInvSBoxForChar(Integer.parseInt(left + ""), Integer.parseInt(right + ""));
+        return getInvSBoxForChar(Utils.hexStringToInt(left + ""), Utils.hexStringToInt(right + ""));
     }
 
     public static String getInvSBoxForChar(int r, int c)

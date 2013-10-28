@@ -15,7 +15,12 @@ Programmer #2:
 	CSID: vuonga
 	Email: ann.vuong@utexas.edu
 	
-
-
-
 We copied the algo on Wikipedia for finite field arithmetic for multiplication.
+
+641ms for encryption for a 10313 byte file
+679ms for decryption for a 10313 byte file
+
+Decryption is slightly slower than encryption, by about 6%.
+
+15.711839 megabytes per second for encryption.
+14.832531 megabytes per second for decryption.

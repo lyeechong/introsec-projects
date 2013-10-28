@@ -11,28 +11,26 @@ import java.util.Scanner;
  *
  * @author lchong
  */
-public class Encryption
+public class Decryption
 {
 
     String keyFileName;
     String inputFileName;
+    String[][][] roundKeys = new String[11][4][4];
 
-    public Encryption(String keyFileName, String inputFileName)
+    public Decryption(String keyFileName, String inputFileName)
     {
         this.keyFileName = keyFileName;
         this.inputFileName = inputFileName;
     }
 
-    public void encrypt() throws IOException
+    public void decrypt() throws IOException
     {
 
-        MyFileWriter myFileWriter = new MyFileWriter(inputFileName + ".enc");
+        MyFileWriter myFileWriter = new MyFileWriter(inputFileName + ".dec");
 
         Scanner plainTextFile = new Scanner(new File(inputFileName));
         Scanner keyFile = new Scanner(new File(keyFileName));
-
-        Utils.log("Starting to process the plaintext file for encryption");
-
 
         String[][] initialCipherKey = new String[4][4];
         RoundKeyGenerator roundKeyGenerator = null;
@@ -41,22 +39,37 @@ public class Encryption
             String keyLine = keyFile.nextLine();
 
             keyLine = String.format("%-32s", keyLine).replaceAll(" ", "0");
-
             Utils.log("the keyLine is :: " + keyLine);
             assert keyLine.length() == 32;
             //stuff it into a matrix
             transformIntoMatrix(initialCipherKey, keyLine);
             Utils.log("the keyLine as a matrix is :: ");
-            Utils.logMatrix(initialCipherKey);    
+            Utils.logMatrix(initialCipherKey);
+
+            //create a new round key generator for use in the rounds
+            roundKeyGenerator = new RoundKeyGenerator(initialCipherKey);
+
         }
+
+        for (int i = 10; i >= 0; i--)
+        {
+            roundKeys[i] = roundKeyGenerator.getNextCipherKey();
+        }
+
+        Utils.log("Starting to process the plaintext file for decryption");
 
         //now process the plaintext
         while (plainTextFile.hasNextLine())
         {
             String[][] matrix = new String[4][4];
             String plainTextLine = plainTextFile.nextLine();
-            roundKeyGenerator = new RoundKeyGenerator(initialCipherKey);
+
             plainTextLine = String.format("%-32s", plainTextLine).replaceAll(" ", "0");
+
+            if (!hexCheck(plainTextLine))
+            {
+                continue;
+            }
 
             Utils.log("The plainTextLine is " + plainTextLine);
             assert plainTextLine.length() == 32;
@@ -64,71 +77,62 @@ public class Encryption
             Utils.log("the plainTextLine as a matrix is :: ");
             Utils.logMatrix(matrix);
 
-
-            Utils.log("Doing initial add round key thing");
-            addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
-            Utils.log("Matrix after adding initial round key:");
+            Utils.log("doing initial round key for decrypt");
+            addRoundKey(matrix, roundKeys[0]);
+            Utils.log("round key being used:");
+            Utils.logMatrix(roundKeys[0]);
+            Utils.log("after initial round key");
             Utils.logMatrix(matrix);
 
-            /***
-             * 
-             * TODO             
-             * http://www.cs.bc.edu/~straubin/cs381-05/blockciphers/rijndael_ingles2004.swf
-             * do a final round after the 9 rounds
-             * do file writing stuff
-             */
-            // do 9 rounds of the regular stuff
-            Utils.log("Beginning the 9 rounds");
+            Utils.log("beginning the 9 rounds for decryption");
             for (int i = 0; i < 9; i++)
             {
-                Utils.log("Doing subBytes (round #" + (i + 1) + ")");
-                subBytes(matrix);
-                Utils.log("Matrix after subBytes: (round #" + (i + 1) + ")");
+                Utils.log("doing inverse shift rows (round #" + (i + 1) + ")");
+                invShiftRows(matrix);
+                Utils.log("after inverse shift rows");
                 Utils.logMatrix(matrix);
 
-                Utils.log("Doing shiftRows (round #" + (i + 1) + ")");
-                shiftRows(matrix);
-                Utils.log("Matrix after shiftRows: (round #" + (i + 1) + ")");
+                Utils.log("doing inverse sub bytes (round #" + (i + 1) + ")");
+                invSubBytes(matrix);
+                Utils.log("after inverse sub bytes");
                 Utils.logMatrix(matrix);
 
-                Utils.log("Doing mixing cols (round #" + (i + 1) + ")");
-                doMix(matrix);
-                Utils.log("Matrix after mixing cols: (round #" + (i + 1) + ")");
+                Utils.log("doing round key for decrypt (round #" + (i + 1) + ")");
+                Utils.log("round key being used:");
+                Utils.logMatrix(roundKeys[i + 1]);
+                addRoundKey(matrix, roundKeys[i + 1]);
+                Utils.log("after adding round key");
                 Utils.logMatrix(matrix);
 
-                Utils.log("Doing adding round key (round #" + (i + 1) + ")");
-                addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
-                Utils.log("Matrix after adding round key: (round #" + (i + 1) + ")");
+                Utils.log("doing inv mix for decrypt (round #" + (i + 1) + ")");
+                doInvMix(matrix);
+                Utils.log("after doing inv mix");
                 Utils.logMatrix(matrix);
             }
 
+            //begin the final round!
             Utils.log("Beginning the final round");
-            //do one final round here (no mixing columns)
-            Utils.log("Doing subBytes (final round)");
-            subBytes(matrix);
-            Utils.log("Matrix after subBytes (final round):");
+            Utils.log("doing inverse shift rows (final round)");
+            invShiftRows(matrix);
+            Utils.log("after inverse shift rows");
             Utils.logMatrix(matrix);
 
-            Utils.log("Doing shiftRows (final round)");
-            shiftRows(matrix);
-            Utils.log("Matrix after shiftRows (final round):");
+            Utils.log("doing inverse sub bytes (final round)");
+            invSubBytes(matrix);
+            Utils.log("after inverse sub bytes");
             Utils.logMatrix(matrix);
 
-            Utils.log("Not doing mixing cols since this is the final round");
-
-            Utils.log("Doing adding round key (final round)");
-            addRoundKey(matrix, roundKeyGenerator.getNextCipherKey());
-            Utils.log("Matrix after adding round key (final round):");
+            Utils.log("doing round key for decrypt (final round)");
+            addRoundKey(matrix, roundKeys[10]);
+            Utils.log("after adding round key");
             Utils.logMatrix(matrix);
 
-            String encryptedString = Utils.matrixToString(matrix);
-            Utils.log("Done with encryption of this line!");
-            Utils.log("Encrypted line: " + encryptedString);
+            Utils.log("the decrypted string is::");
+            String decryptedString = Utils.matrixToString(matrix).toUpperCase();
+            Utils.log(decryptedString);
 
-            Utils.log("Writing to output file");
-            myFileWriter.writeLine(encryptedString.toUpperCase());
-            Utils.log("");
-            Utils.log("");
+            myFileWriter.writeLine(decryptedString);
+
         }
         myFileWriter.writeOutputFile();
     }
@@ -182,50 +186,50 @@ public class Encryption
         return res;
     }
 
-    private void subBytes(String[][] matrix)
+    private void invSubBytes(String[][] matrix)
     {
         for (int i = 0; i < matrix.length; i++)
         {
             for (int j = 0; j < matrix[0].length; j++)
             {
                 String currentCell = matrix[i][j];
-                String subbedCell = SBox.getSBoxForChar(currentCell);
+                String subbedCell = InvSBox.getInvSBoxForChar(currentCell);
                 matrix[i][j] = subbedCell;
             }
         }
     }
 
-    private String[][] shiftRows(String[][] matrix)
+    private String[][] invShiftRows(String[][] matrix)
     {
-        shiftSecondTopLeftOne(matrix);
-        shiftThirdTopLeftTwo(matrix);
-        shiftFourthTopLeftThree(matrix);
+        invShiftSecondTopRightOne(matrix);
+        invShiftThirdTopRightTwo(matrix);
+        invShiftFourthTopRightThree(matrix);
         return matrix;
     }
 
-    private void shiftSecondTopLeftOne(String[][] matrix)
+    private void invShiftSecondTopRightOne(String[][] matrix)
     {
         String[] secondToprow = new String[4];
-        secondToprow[0] = matrix[1][1];
-        secondToprow[1] = matrix[1][2];
-        secondToprow[2] = matrix[1][3];
-        secondToprow[3] = matrix[1][0];
+        secondToprow[0] = matrix[1][3];
+        secondToprow[1] = matrix[1][0];
+        secondToprow[2] = matrix[1][1];
+        secondToprow[3] = matrix[1][2];
         matrix[1] = secondToprow;
     }
 
-    private void shiftThirdTopLeftTwo(String[][] matrix)
+    private void invShiftThirdTopRightTwo(String[][] matrix)
     {
         swapCells(matrix, 2, 2, 2, 0);
         swapCells(matrix, 2, 3, 2, 1);
     }
 
-    private void shiftFourthTopLeftThree(String[][] matrix)
+    private void invShiftFourthTopRightThree(String[][] matrix)
     {
         String[] secondToprow = new String[4];
-        secondToprow[0] = matrix[3][3];
-        secondToprow[1] = matrix[3][0];
-        secondToprow[2] = matrix[3][1];
-        secondToprow[3] = matrix[3][2];
+        secondToprow[0] = matrix[3][1];
+        secondToprow[1] = matrix[3][2];
+        secondToprow[2] = matrix[3][3];
+        secondToprow[3] = matrix[3][0];
         matrix[3] = secondToprow;
     }
 
@@ -237,7 +241,7 @@ public class Encryption
         matrix[r2][c2] = cell1;
     }
 
-    private void doMix(String[][] matrix)
+    private void doInvMix(String[][] matrix)
     {
         int[][] mat = new int[4][4];
         for (int i = 0; i < matrix.length; i++)
@@ -248,7 +252,7 @@ public class Encryption
                 mat[i][j] = cell;
             }
         }
-        mat = doMixHelper(mat);
+        mat = doInvMixHelper(mat);
 
         for (int i = 0; i < matrix.length; i++)
         {
@@ -260,14 +264,14 @@ public class Encryption
 
     }
 
-    private int[][] doMixHelper(int[][] mat)
+    private int[][] doInvMixHelper(int[][] mat)
     {
         int[][] result = new int[4][4];
 
-        //b0 = 2a0 + 3a1 + 1a2 + 1a3
-        //b1 = 1a0 + 2a1 + 3a2 + 1a3
-        //b2 = 1a0 + 1a1 + 2a2 + 3a3
-        //b3 = 3a0 + 1a1 + 1a2 + 2a3
+        //b0 = 14a0 + 11a1 + 13a2 + 9a3
+        //b1 = 9a0 + 14a1 + 11a2 + 13a3
+        //b2 = 13a0 + 9a1 + 14a2 + 11a3
+        //b3 = 11a0 + 13a1 + 9a2 + 14a3
         for (int r = 0; r < 4; r++)
         {
             int a0 = mat[0][r];
@@ -275,25 +279,25 @@ public class Encryption
             int a2 = mat[2][r];
             int a3 = mat[3][r];
 
-            int b0 = FieldMath.gmul(2, a0)
-                    ^ FieldMath.gmul(3, a1)
-                    ^ a2
-                    ^ a3;
+            int b0 = FieldMath.gmul(14, a0)
+                    ^ FieldMath.gmul(11, a1)
+                    ^ FieldMath.gmul(13, a2)
+                    ^ FieldMath.gmul(9, a3);
 
-            int b1 = a0
-                    ^ FieldMath.gmul(2, a1)
-                    ^ FieldMath.gmul(3, a2)
-                    ^ a3;
+            int b1 = FieldMath.gmul(9, a0)
+                    ^ FieldMath.gmul(14, a1)
+                    ^ FieldMath.gmul(11, a2)
+                    ^ FieldMath.gmul(13, a3);
 
-            int b2 = a0
-                    ^ a1
-                    ^ FieldMath.gmul(2, a2)
-                    ^ FieldMath.gmul(3, a3);
+            int b2 = FieldMath.gmul(13, a0)
+                    ^ FieldMath.gmul(9, a1)
+                    ^ FieldMath.gmul(14, a2)
+                    ^ FieldMath.gmul(11, a3);
 
-            int b3 = FieldMath.gmul(3, a0)
-                    ^ a1
-                    ^ a2
-                    ^ FieldMath.gmul(2, a3);
+            int b3 = FieldMath.gmul(11, a0)
+                    ^ FieldMath.gmul(13, a1)
+                    ^ FieldMath.gmul(9, a2)
+                    ^ FieldMath.gmul(14, a3);
 
             b0 = Utils.maskToByte(b0);
             b1 = Utils.maskToByte(b1);
