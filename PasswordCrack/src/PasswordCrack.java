@@ -14,19 +14,17 @@ import java.util.Scanner;
 public class PasswordCrack
 {
 
-    private static final int MAX_DEPTH = 2;
-
     public PasswordCrack()
     {
     }
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, InterruptedException
     {
         PasswordCrack pc = new PasswordCrack();
         pc.run(args);
     }
 
-    public void run(String[] args) throws IOException
+    public void run(String[] args) throws IOException, InterruptedException
     {
         assert args.length == 2;
 
@@ -48,36 +46,13 @@ public class PasswordCrack
             Dictionary.addWord(word);
         }
 
-        int count = 0;
-        int total = 0;
         while (passwordFile.hasNextLine())
         {
-            String passwordLine = passwordFile.nextLine();
-            CrackForOneUser cfou = new CrackForOneUser(passwordLine);
-            cfou.crack();
-            String plaintextPassword = cfou.getPlaintextPassword();
-
-            int depth = 0;
-            while (plaintextPassword.equals(CrackForOneUser.FAILURE_MESSAGE) && depth < MAX_DEPTH)
-            {
-                cfou.goDeeper();
-                cfou.crack();
-                plaintextPassword = cfou.getPlaintextPassword();
-            }
-            if (depth == MAX_DEPTH)
-            {
-                // we failed!
-            }
-            else
-            {
-                count++;
-            }
-            total++;
-            System.out.println(plaintextPassword);
+            Thread t = new Thread(new PasswordCrackThreadTask(passwordFile.nextLine()));
+            t.start();
+            Thread.sleep(1000);
+            t.interrupt();
         }
-
-        System.out.println("");
-        System.out.println("Got " + count + " passwords out of " + total);
 
         String encryptedPassword = Jcrypt.crypt(passwordFileName, passwordFileName);
 
