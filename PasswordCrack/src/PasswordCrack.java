@@ -48,10 +48,7 @@ public class PasswordCrack
 
         while (passwordFile.hasNextLine())
         {
-            Thread t = new Thread(new PasswordCrackThreadTask(passwordFile.nextLine()));
-            t.start();
-            Thread.sleep(1000);
-            t.interrupt();
+            new PasswordCrackThing(passwordFile.nextLine()).run();
         }
 
         String encryptedPassword = Jcrypt.crypt(passwordFileName, passwordFileName);

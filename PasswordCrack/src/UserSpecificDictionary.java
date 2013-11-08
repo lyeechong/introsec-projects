@@ -39,10 +39,18 @@ public class UserSpecificDictionary
 
     public void weNeedToGoDeeper()
     {
+        long MAX_TIME = 8000;
+        long startTime = System.currentTimeMillis();
         Set<String> temp = new HashSet<>(this.words);
         Set<String> newStuff = new HashSet<>();
         for (String word : temp)
         {
+            long currentTime = System.currentTimeMillis();
+            if(currentTime > startTime + MAX_TIME)            
+            {
+                this.words = newStuff;
+                return;
+            }
             Permutations p = new Permutations(word);
             newStuff.addAll(p.getPermutations());
         }
