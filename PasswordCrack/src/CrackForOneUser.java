@@ -14,7 +14,6 @@ public class CrackForOneUser
     private PwdFields pwdFields;
     private UserSpecificDictionary usd;
     private boolean ranCrack;
-    
     public static String FAILURE_MESSAGE = "I didn't manage to get the plaintext password!";
 
     public CrackForOneUser(String userPwdLine)
@@ -24,25 +23,42 @@ public class CrackForOneUser
         ranCrack = false;
     }
 
+    public void setPlaintextPassword(String plaintextPassword)
+    {
+        this.plaintextPassword = plaintextPassword;
+    }
+
     public void crack()
     {
         ranCrack = true;
-        String salt = pwdFields.getSalt();
 
-        loop:
-        for (String dictionaryWord : usd.getWords())
+        Thread t = new Thread(new PasswordCrackThreadTask(this));
+        t.start();
+        try
         {
-            String encryptedPassword = Jcrypt.crypt(salt, dictionaryWord);
-            
-            if (encryptedPassword.equals(pwdFields.getEncryptedPwd()))
-            {
-                // found it!
-                this.plaintextPassword = dictionaryWord;
-                return;
-            }
+            Thread.sleep(10000);
         }
-        
-        this.plaintextPassword = FAILURE_MESSAGE;
+        catch (InterruptedException ex)
+        {
+            System.out.println("ex" + ex.getMessage());
+        }
+        t.interrupt();
+
+    }
+
+    public PwdFields getPwdFields()
+    {
+        return pwdFields;
+    }
+
+    public boolean isRanCrack()
+    {
+        return ranCrack;
+    }
+
+    public UserSpecificDictionary getUsd()
+    {
+        return usd;
     }
 
     public String getPlaintextPassword()
@@ -53,7 +69,7 @@ public class CrackForOneUser
         }
         return this.plaintextPassword;
     }
-    
+
     public void goDeeper()
     {
         usd.weNeedToGoDeeper();
