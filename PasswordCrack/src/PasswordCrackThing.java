@@ -22,7 +22,7 @@ public class PasswordCrackThing
     {
         try
         {
-            
+
             doStuff();
         }
         catch (InterruptedException ex)
@@ -38,29 +38,35 @@ public class PasswordCrackThing
 
         int depth = 0;
         long startTime = System.currentTimeMillis();
-        long MAX_TIME = 10000;
+        long MAX_TIME = 15000;
         while (plaintextPassword.equals(CrackForOneUser.FAILURE_MESSAGE) && depth < MAX_DEPTH)
         {
             long currentTime = System.currentTimeMillis();
-            if(currentTime > startTime + MAX_TIME)
+            if (currentTime > startTime + MAX_TIME)
             {
                 plaintextPassword = cfou.getPlaintextPassword();
-                System.out.println(plaintextPassword);
-                return;                
+                if (!plaintextPassword.equals(CrackForOneUser.FAILURE_MESSAGE))
+                {
+                    System.out.println(plaintextPassword);
+                }
+                return;
             }
-            
+
             //System.out.println("Going deeper: " + depth);
             cfou.goDeeper();
             //System.out.println("Cracking");
-            
+
             currentTime = System.currentTimeMillis();
-            if(currentTime > startTime + MAX_TIME)
+            if (currentTime > startTime + MAX_TIME)
             {
                 plaintextPassword = cfou.getPlaintextPassword();
-                System.out.println(plaintextPassword);
-                return;                
+                if (!plaintextPassword.equals(CrackForOneUser.FAILURE_MESSAGE))
+                {
+                    System.out.println(plaintextPassword);
+                }
+                return;
             }
-            
+
             cfou.crack();
             plaintextPassword = cfou.getPlaintextPassword();
             depth++;
@@ -68,7 +74,7 @@ public class PasswordCrackThing
         if (depth == MAX_DEPTH || plaintextPassword.equals(CrackForOneUser.FAILURE_MESSAGE))
         {
             // we failed!
-            System.out.println("Failed!!");
+            //System.out.println("Failed!!");
         }
         else
         {

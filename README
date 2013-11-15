@@ -1,7 +1,7 @@
 cs361security
 =============
 
-CS 361 Intro to Computer Security assignment 4
+CS 361 Intro to Computer Security assignment 5
 
 Programmer #1:
 	Name: Lyee Chong
@@ -14,13 +14,5 @@ Programmer #2:
 	UTEID: atv286
 	CSID: vuonga
 	Email: ann.vuong@utexas.edu
-	
-We copied the algo on Wikipedia for finite field arithmetic for multiplication.
 
-641ms for encryption for a 10313 byte file
-679ms for decryption for a 10313 byte file
-
-Decryption is slightly slower than encryption, by about 6%.
-
-15.711839 megabytes per second for encryption.
-14.832531 megabytes per second for decryption.
+We time-out some of the passwords we try to crack after they reach a certain time limit.
