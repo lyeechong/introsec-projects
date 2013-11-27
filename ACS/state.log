@@ -1,0 +1,3 @@
+rxw------ user1 group1 file2
+rx-r-wr-w user2 group1 file3
+--------- user1 group1 file1
