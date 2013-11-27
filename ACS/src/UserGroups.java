@@ -17,6 +17,8 @@ public class UserGroups
      */
     static HashMap<String, String> userGroups;
 
+    public static final String ROOT_GROUP_NAME = "root";
+    
     static
     {
         userGroups = new HashMap<>();
@@ -24,7 +26,6 @@ public class UserGroups
     
     public static boolean isRoot(String user)
     {
-        //TODO
-        return true;
+        return userGroups.get(user).equals(ROOT_GROUP_NAME);
     }
 }
